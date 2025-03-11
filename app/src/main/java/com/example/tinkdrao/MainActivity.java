@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
     private ImageSliderAdapter adapter;
     private List<String> imageUrls;
+    private DatabaseReference databaseReference;
     private DatabaseReference drinkRef;
 
     private RecyclerView drinksRecyclerView;
@@ -32,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        drinkRef = FirebaseDatabase.getInstance().getReference("Drink");
+        databaseReference = FirebaseDatabase.getInstance().getReference("TinkDrao");
+        drinkRef = databaseReference.child("Drink");
 
         setUpImageSlider();
         setUpRecyclerView();
