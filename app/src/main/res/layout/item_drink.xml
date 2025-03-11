@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="160dp"
-    android:layout_height="215dp"
+    android:layout_height="220dp"
     card_view:cardCornerRadius="12dp"
     card_view:cardElevation="4dp"
     android:layout_margin="8dp">
@@ -18,7 +18,7 @@
         <ImageView
             android:id="@+id/drinkImage"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_height="120dp"
             android:scaleType="fitXY"
             android:contentDescription="Drink Image"/>
 
@@ -31,17 +31,35 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#2C3E50"
-            android:padding="8dp"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"
             android:gravity="center"/>
 
-        <!-- Giá -->
+        <!-- Giá gốc (bị gạch ngang) -->
         <TextView
-            android:id="@+id/drinkPrice"
+            android:id="@+id/drinkOriginalPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="$0.00"
-            android:textSize="14sp"
+            android:text="$4.00"
+            android:textSize="12sp"
+            android:textColor="#7F8C8D"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:visibility="gone"/>
+
+        <!-- Giá đã giảm -->
+        <TextView
+            android:id="@+id/drinkDiscountedPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="$3.50"
+            android:textSize="16sp"
+            android:textStyle="bold"
             android:textColor="#E74C3C"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:paddingBottom="8dp"/>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

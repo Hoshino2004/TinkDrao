@@ -2,16 +2,18 @@ package com.example.tinkdrao.model;
 
 public class Drink {
     private String name;
-    private double price;
+    private double originalPrice;  // Giá gốc
+    private double discountedPrice;  // Giá đã giảm
     private String imageUrl;
 
     public Drink() {
         // Constructor mặc định cần cho Firebase
     }
 
-    public Drink(String name, double price, String imageUrl) {
+    public Drink(String name, double originalPrice, double discountedPrice, String imageUrl) {
         this.name = name;
-        this.price = price;
+        this.originalPrice = originalPrice;
+        this.discountedPrice = discountedPrice;
         this.imageUrl = imageUrl;
     }
 
@@ -19,8 +21,12 @@ public class Drink {
         return name;
     }
 
-    public double getPrice() {
-        return price;
+    public double getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public double getDiscountedPrice() {
+        return discountedPrice;
     }
 
     public String getImageUrl() {

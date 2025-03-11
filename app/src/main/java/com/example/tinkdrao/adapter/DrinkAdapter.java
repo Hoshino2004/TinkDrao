@@ -1,6 +1,7 @@
 package com.example.tinkdrao.adapter;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,9 +38,17 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.DrinkViewHol
         Drink drink = drinkList.get(position);
 
         holder.drinkName.setText(drink.getName());
-        holder.drinkPrice.setText(String.format("$%.2f", drink.getPrice()));
+        holder.drinkDiscountedPrice.setText(String.format("$%.2f", drink.getDiscountedPrice()));
 
-        // Sử dụng Glide để load ảnh từ URL
+        // Hiển thị giá gốc nếu có giảm giá (giá gốc > giá đã giảm)
+        if (drink.getOriginalPrice() > drink.getDiscountedPrice()) {
+            holder.drinkOriginalPrice.setText(String.format("$%.2f", drink.getOriginalPrice()));
+            holder.drinkOriginalPrice.setVisibility(View.VISIBLE);
+        } else {
+            holder.drinkOriginalPrice.setVisibility(View.GONE);
+        }
+
+        // Load ảnh bằng Glide
         Glide.with(context)
                 .load(drink.getImageUrl())
                 .into(holder.drinkImage);
@@ -53,13 +62,18 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.DrinkViewHol
     public static class DrinkViewHolder extends RecyclerView.ViewHolder {
         ImageView drinkImage;
         TextView drinkName;
-        TextView drinkPrice;
+        TextView drinkOriginalPrice;
+        TextView drinkDiscountedPrice;
 
         public DrinkViewHolder(@NonNull View itemView) {
             super(itemView);
             drinkImage = itemView.findViewById(R.id.drinkImage);
             drinkName = itemView.findViewById(R.id.drinkName);
-            drinkPrice = itemView.findViewById(R.id.drinkPrice);
+
+            drinkOriginalPrice = itemView.findViewById(R.id.drinkOriginalPrice);
+            drinkOriginalPrice.setPaintFlags(drinkOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+            drinkDiscountedPrice = itemView.findViewById(R.id.drinkDiscountedPrice);
         }
     }
 }
