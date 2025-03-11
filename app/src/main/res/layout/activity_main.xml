@@ -1,88 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+    <!-- ScrollView chứa nội dung có thể cuộn -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="match_parent">
 
-    <!-- Tiêu đề tùy chỉnh -->
-    <TextView
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
+            <!-- Tiêu đề tùy chỉnh -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sản phẩm bán chạy"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2C3E50"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="10dp"
+                android:paddingBottom="5dp"/>
+
+            <!-- RecyclerView ngang -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/drinksRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Tiêu đề tùy chỉnh -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sản phẩm mới nhất"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#2C3E50"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:paddingBottom="10dp"/>
+
+                <!-- View để đẩy "Xem tất cả" sang phải -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <!-- TextView Xem tất cả -->
+                <TextView
+                    android:id="@+id/viewAllText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xem tất cả >"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#F27A56"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="6dp"
+                    android:gravity="center"
+                    android:layout_gravity="end"/>
+
+            </LinearLayout>
+
+            <!-- RecyclerView ngang -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/drinksRecyclerView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- FloatingActionButton nằm ở lớp trên cùng -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnSupport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sản phẩm bán chạy"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#2C3E50"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="10dp"
-        android:paddingBottom="5dp"/>
+        android:layout_margin="30dp"
+        android:backgroundTint="#ff0000"
+        android:elevation="8dp"
+        android:layout_gravity="end|bottom"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_support" />
 
-    <!-- RecyclerView ngang -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/drinksRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:overScrollMode="never"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <!-- Tiêu đề tùy chỉnh -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sản phẩm mới nhất"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#2C3E50"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp"
-            android:paddingBottom="10dp"/>
-
-        <!-- View để đẩy "Xem tất cả" sang phải -->
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
-        <!-- TextView Xem tất cả -->
-        <TextView
-            android:id="@+id/viewAllText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Xem tất cả >"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#F27A56"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="6dp"
-            android:gravity="center"
-            android:layout_gravity="end"/>
-
-    </LinearLayout>
-
-    <!-- RecyclerView ngang -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/drinksRecyclerView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:overScrollMode="never"/>
-
-
-
-</LinearLayout>
+</FrameLayout>
