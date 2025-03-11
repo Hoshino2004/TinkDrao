@@ -99,8 +99,9 @@ public class MainActivity extends AppCompatActivity {
                 imageUrls.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Drink drink = dataSnapshot.getValue(Drink.class);
-                    if (drink != null)
+                    if (drink != null) {
                         imageUrls.add(drink.getImageUrl());
+                    }
                 }
                 adapter.notifyDataSetChanged();
             }
