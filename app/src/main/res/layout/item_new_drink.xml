@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="160dp"
+    android:layout_height="220dp"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="4dp"
+    android:layout_margin="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#FFFFFF">
+
+        <!-- Ảnh nước -->
+        <ImageView
+            android:id="@+id/newDrinkImage"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:scaleType="fitXY"
+            android:contentDescription="Drink Image"/>
+
+        <!-- Tên nước -->
+        <TextView
+            android:id="@+id/newDrinkName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Drink Name"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#2C3E50"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"
+            android:gravity="center"/>
+
+        <!-- Giá gốc (bị gạch ngang) -->
+        <TextView
+            android:id="@+id/newDrinkOriginalPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="$4.00"
+            android:textSize="12sp"
+            android:textColor="#7F8C8D"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:visibility="visible"/>
+
+        <!-- Giá đã giảm -->
+        <TextView
+            android:id="@+id/newDrinkDiscountedPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="$3.50"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#E74C3C"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:paddingBottom="8dp"/>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.tinkdrao.adapter.DrinkAdapter;
 import com.example.tinkdrao.adapter.ImageSliderAdapter;
+import com.example.tinkdrao.adapter.NewDrinkAdapter;
 import com.example.tinkdrao.model.Drink;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +35,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
+
+    private Handler handler = new Handler();
+    private Runnable runnable;
     private ImageSliderAdapter adapter;
     private List<String> imageUrls;
     private DatabaseReference databaseReference;
@@ -41,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView drinksRecyclerView;
     private RecyclerView drinksRecyclerView2;
     private DrinkAdapter drinkAdapter;
+    private NewDrinkAdapter newDrinkAdapter;
     private List<Drink> drinkList;
+    private List<Drink> newDrinkList;
     private TextView tvViewAll;
 
     FirebaseAuth mAuth;
@@ -74,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         // Khởi tạo RecyclerView
         drinksRecyclerView = findViewById(R.id.drinksRecyclerView);
         drinksRecyclerView2 = findViewById(R.id.drinksRecyclerView2);
+
         drinksRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         );
@@ -83,9 +91,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Khởi tạo list và adapter
         drinkList = new ArrayList<>();
+        newDrinkList = new ArrayList<>();
+
         drinkAdapter = new DrinkAdapter(this, drinkList);
+        newDrinkAdapter = new NewDrinkAdapter(this, newDrinkList);
+
         drinksRecyclerView.setAdapter(drinkAdapter);
-        drinksRecyclerView2.setAdapter(drinkAdapter);
+        drinksRecyclerView2.setAdapter(newDrinkAdapter);
 
         // Lấy dữ liệu từ Firebase
         fetchDrinksFromFirebase();
@@ -95,18 +107,21 @@ public class MainActivity extends AppCompatActivity {
         drinkRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                drinkList.clear(); // Xóa dữ liệu cũ trước khi cập nhật
+                drinkList.clear();
+                List<Drink> tempList = new ArrayList<>();
 
                 // Duyệt qua tất cả các node con trong "drinks"
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Drink drink = snapshot.getValue(Drink.class);
                     if (drink != null) {
+                        tempList.add(drink);
                         drinkList.add(drink);
                     }
                 }
 
                 // Cập nhật adapter khi có dữ liệu mới
                 drinkAdapter.notifyDataSetChanged();
+                newDrinkAdapter.updateList(tempList);
             }
 
             @Override
@@ -122,6 +137,41 @@ public class MainActivity extends AppCompatActivity {
         imageUrls = new ArrayList<>();
         adapter = new ImageSliderAdapter(this, imageUrls);
         viewPager.setAdapter(adapter);
+
+        // Tạo Runnable để chuyển trang
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (viewPager.getAdapter() == null) return;
+
+                int currentItem = viewPager.getCurrentItem();
+                int itemCount = viewPager.getAdapter().getItemCount();
+
+                // Chuyển sang trang tiếp theo (vòng lại nếu hết)
+                int nextItem = (currentItem + 1) % itemCount;
+                viewPager.setCurrentItem(nextItem, true);
+
+                // Đặt lại handler (chỉ một runnable chạy duy nhất)
+                handler.postDelayed(this, 5000);
+            }
+        };
+
+        // Chạy auto scroll lần đầu
+        handler.postDelayed(runnable, 5000);
+
+        // Dừng auto scroll khi người dùng tương tác
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+                if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                    handler.removeCallbacks(runnable);
+                } else if (state == ViewPager2.SCROLL_STATE_IDLE) {
+                    handler.removeCallbacks(runnable);
+                    handler.postDelayed(runnable, 5000);
+                }
+            }
+        });
 
         drinkRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -140,6 +190,13 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError error) {}
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(runnable);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
