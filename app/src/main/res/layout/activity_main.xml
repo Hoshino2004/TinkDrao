@@ -59,7 +59,7 @@
 
         <!-- TextView Xem tất cả -->
         <TextView
-            android:id="@+id/viewAllText"
+            android:id="@+id/tvViewAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Xem tất cả >"

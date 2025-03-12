@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5"
+    android:padding="16dp">
+
+    <!-- Thanh tìm kiếm -->
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/search_background"
+        android:queryHint="Tìm kiếm nước..."
+        android:layout_marginBottom="10dp"
+        android:iconifiedByDefault="false"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btnFilterPrice"
+            android:layout_width="180dp"
+            android:layout_height="50dp"
+            android:text="Lọc giá ▼"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:padding="12dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/spinnerDrinkType"
+            android:layout_width="190dp"
+            android:layout_height="50dp"
+            android:text="Chọn loại ▼"
+            android:textSize="18sp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
+            android:padding="12dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
+    <!-- RecyclerView dọc -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:overScrollMode="never"/>
+
+</LinearLayout>

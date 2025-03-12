@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Giá"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
+    <com.google.android.material.slider.RangeSlider
+        android:id="@+id/rangeSliderPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:valueFrom="0"
+        android:valueTo="500000"
+        android:stepSize="10000"
+        app:trackColorActive="@color/green_500"
+        app:trackColorInactive="@color/gray_300"
+        app:thumbColor="@color/orange_500"
+        app:haloColor="@color/orange_200"
+        app:labelBehavior="gone"
+        app:thumbRadius="12dp"
+        app:haloRadius="12dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvMinPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0"
+            android:textSize="16sp"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/tvMaxPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="500 nghìn"
+            android:textSize="16sp"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/etMinPrice"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="Giá tối thiểu"
+            android:inputType="number"
+            android:background="@drawable/bg_edittext"
+            android:padding="8dp"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:textSize="18sp"
+            android:padding="8dp" />
+
+        <EditText
+            android:id="@+id/etMaxPrice"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="Giá tối đa"
+            android:inputType="number"
+            android:background="@drawable/bg_edittext"
+            android:padding="8dp"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnApply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Áp dụng"
+        android:textSize="16sp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/background_button_save"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>

@@ -46,7 +46,7 @@
             android:textColor="#7F8C8D"
             android:gravity="center"
             android:paddingHorizontal="8dp"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
         <!-- Giá đã giảm -->
         <TextView

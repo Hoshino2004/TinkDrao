@@ -1,10 +1,12 @@
 package com.example.tinkdrao;
 
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView drinksRecyclerView2;
     private DrinkAdapter drinkAdapter;
     private List<Drink> drinkList;
+    private TextView tvViewAll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,14 @@ public class MainActivity extends AppCompatActivity {
 
         databaseReference = FirebaseDatabase.getInstance().getReference("TinkDrao");
         drinkRef = databaseReference.child("Drink");
+
+        tvViewAll = findViewById(R.id.tvViewAll);
+        tvViewAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, SearchDrinkActivity.class));
+            }
+        });
 
         setUpImageSlider();
         setUpRecyclerView();

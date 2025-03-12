@@ -1,19 +1,50 @@
 package com.example.tinkdrao.model;
 
 public class Drink {
-    private String name;
-    private double originalPrice;  // Giá gốc
-    private double discountedPrice;  // Giá đã giảm
+    private long id;
     private String imageUrl;
 
+    private String name;
+    private double price;
+    private double discount;  // Giảm giá
+
+    private String drinkType; // Loại đồ uống
+
+    private int purchaseCount; // Số lượng đã bán
+    private int quantity; // Số lượng trong kho
+    private String unit; // Đơn vị
+    private String createdAt; // Thời gian thêm sản phẩm
+
+
     public Drink() {
-        // Constructor mặc định cần cho Firebase
     }
 
-    public Drink(String name, double originalPrice, double discountedPrice, String imageUrl) {
+    public Drink(long id, String imageUrl, String name, double price, double discount, String drinkType, int purchaseCount, int quantity, String unit, String createdAt) {
+        this.id = id;
+        this.imageUrl = imageUrl;
         this.name = name;
-        this.originalPrice = originalPrice;
-        this.discountedPrice = discountedPrice;
+        this.price = price;
+        this.discount = discount;
+        this.drinkType = drinkType;
+        this.purchaseCount = purchaseCount;
+        this.quantity = quantity;
+        this.unit = unit;
+        this.createdAt = createdAt;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
@@ -21,15 +52,63 @@ public class Drink {
         return name;
     }
 
-    public double getOriginalPrice() {
-        return originalPrice;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public double getDiscountedPrice() {
-        return discountedPrice;
+    public double getPrice() {
+        return price;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
+
+    public String getDrinkType() {
+        return drinkType;
+    }
+
+    public void setDrinkType(String drinkType) {
+        this.drinkType = drinkType;
+    }
+
+    public int getPurchaseCount() {
+        return purchaseCount;
+    }
+
+    public void setPurchaseCount(int purchaseCount) {
+        this.purchaseCount = purchaseCount;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }

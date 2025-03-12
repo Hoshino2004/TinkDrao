@@ -15,15 +15,20 @@ import com.bumptech.glide.Glide;
 import com.example.tinkdrao.R;
 import com.example.tinkdrao.model.Drink;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.DrinkViewHolder> {
     private List<Drink> drinkList;
     private Context context;
+    private DecimalFormat decimalFormat; // Định dạng giá tiền
 
     public DrinkAdapter(Context context, List<Drink> drinkList) {
         this.context = context;
         this.drinkList = drinkList;
+        // Khởi tạo DecimalFormat với dấu chấm ngăn cách hàng nghìn
+        decimalFormat = new DecimalFormat("#,###"); // Dấu chấm: 12.000
+        decimalFormat.setDecimalSeparatorAlwaysShown(false); // Không hiển thị phần thập phân
     }
 
     @NonNull
@@ -38,19 +43,22 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.DrinkViewHol
         Drink drink = drinkList.get(position);
 
         holder.drinkName.setText(drink.getName());
-        holder.drinkDiscountedPrice.setText(String.format("$%.2f", drink.getDiscountedPrice()));
-
-        // Hiển thị giá gốc nếu có giảm giá (giá gốc > giá đã giảm)
-        if (drink.getOriginalPrice() > drink.getDiscountedPrice()) {
-            holder.drinkOriginalPrice.setText(String.format("$%.2f", drink.getOriginalPrice()));
+        // Hiển thị giá gốc nếu có giảm giá
+        if (drink.getDiscount() > 0) {
+            double discountedPrice = drink.getPrice() * (100 - drink.getDiscount()) / 100;
+            holder.drinkDiscountedPrice.setText(decimalFormat.format((int) discountedPrice) + "₫");
+            holder.drinkOriginalPrice.setText(decimalFormat.format((int) drink.getPrice()) + "₫");
             holder.drinkOriginalPrice.setVisibility(View.VISIBLE);
         } else {
             holder.drinkOriginalPrice.setVisibility(View.GONE);
+            holder.drinkDiscountedPrice.setText(decimalFormat.format((int) drink.getPrice()) + "₫");
         }
 
         // Load ảnh bằng Glide
         Glide.with(context)
                 .load(drink.getImageUrl())
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.loading)
                 .into(holder.drinkImage);
     }
 
