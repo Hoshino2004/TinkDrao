@@ -68,13 +68,6 @@ public class MainActivity extends AppCompatActivity {
         setUpImageSlider();
         setUpRecyclerView();
 
-        FloatingActionButton btnSupport = findViewById(R.id.btnSupport);
-        // Xử lý nhấn với OnClickListener
-        btnSupport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
     }
 
     private void setUpRecyclerView() {
