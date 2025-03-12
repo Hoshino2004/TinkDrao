@@ -1,6 +1,7 @@
 package com.example.tinkdrao.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.tinkdrao.DrinkDetailActivity;
 import com.example.tinkdrao.R;
 import com.example.tinkdrao.model.Drink;
 
@@ -35,7 +37,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.DrinkViewHol
     @NonNull
     @Override
     public DrinkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_drink, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_drink, parent, false);
         return new DrinkViewHolder(view);
     }
 
@@ -61,19 +63,26 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.DrinkViewHol
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.loading)
                 .into(holder.drinkImage);
+
+
+
+        // Thêm sự kiện click để chuyển sang DrinkDetailActivity
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DrinkDetailActivity.class);
+            intent.putExtra("id", drink.getId()); // Truyền ID của sản phẩm
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
         return drinkList.size();
     }
-
     public static class DrinkViewHolder extends RecyclerView.ViewHolder {
         ImageView drinkImage;
         TextView drinkName;
         TextView drinkOriginalPrice;
         TextView drinkDiscountedPrice;
-
         public DrinkViewHolder(@NonNull View itemView) {
             super(itemView);
             drinkImage = itemView.findViewById(R.id.drinkImage);
