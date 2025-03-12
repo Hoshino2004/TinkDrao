@@ -1,3 +1,5 @@
+import com.android.builder.files.classpathToRelativeFileSet
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
@@ -85,4 +87,9 @@ dependencies {
     implementation ("com.google.android.gms:play-services-maps:18.2.0")
     implementation ("com.google.android.gms:play-services-location:15.0.1")
     implementation ("com.google.android.gms:play-services-safetynet:18.0.1")
+}
+buildscript {
+    dependencies {
+        classpath("com.google.gms:google-services:4.4.1")
+    }
 }
