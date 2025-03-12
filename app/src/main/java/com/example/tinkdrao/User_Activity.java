@@ -443,9 +443,12 @@ public class User_Activity extends AppCompatActivity {
             startActivity(new Intent(User_Activity.this, MainActivity.class));
             finish();
         }
-//        if (item.getItemId() == R.id.mnFavorite) {
-//            startActivity(new Intent(User_Activity.this, Favorite_House_Activity.class));
-//        }
+        if (item.getItemId() == R.id.mnFavorite) {
+            startActivity(new Intent(User_Activity.this, Favorite_Drink_Activity.class));
+        }
+        if (item.getItemId() == R.id.mnCart) {
+            startActivity(new Intent(User_Activity.this, Cart_Activity.class));
+        }
 //        if (item.getItemId() == R.id.mnChat) {
 //            userRef = FirebaseDatabase.getInstance().getReference("Users");
 //            mUser = FirebaseAuth.getInstance().getCurrentUser();

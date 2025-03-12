@@ -16,6 +16,8 @@ import com.bumptech.glide.Glide;
 import com.example.tinkdrao.DrinkDetailActivity;
 import com.example.tinkdrao.R;
 import com.example.tinkdrao.model.Drink;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -64,8 +66,6 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.DrinkViewHol
                 .error(R.drawable.loading)
                 .into(holder.drinkImage);
 
-
-
         // Thêm sự kiện click để chuyển sang DrinkDetailActivity
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DrinkDetailActivity.class);
@@ -79,10 +79,10 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.DrinkViewHol
         return drinkList.size();
     }
     public static class DrinkViewHolder extends RecyclerView.ViewHolder {
-        ImageView drinkImage;
-        TextView drinkName;
-        TextView drinkOriginalPrice;
-        TextView drinkDiscountedPrice;
+        public ImageView drinkImage;
+        public TextView drinkName;
+        public TextView drinkOriginalPrice;
+        public TextView drinkDiscountedPrice;
         public DrinkViewHolder(@NonNull View itemView) {
             super(itemView);
             drinkImage = itemView.findViewById(R.id.drinkImage);

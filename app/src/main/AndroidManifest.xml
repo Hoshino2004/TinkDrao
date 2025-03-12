@@ -15,6 +15,12 @@
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".Cart_Activity"
+            android:exported="false" />
+        <activity
+            android:name=".Favorite_Drink_Activity"
+            android:exported="false" />
+        <activity
             android:name=".DrinkDetailActivity"
             android:exported="false" />
         <activity

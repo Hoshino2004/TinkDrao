@@ -7,10 +7,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.example.tinkdrao.model.Cart;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,10 +29,12 @@ public class DrinkDetailActivity extends AppCompatActivity {
     private ImageView ivDrinkImage;
     private TextView tvName, tvPrice, tvDiscount, tvDrinkType, tvPurchaseCount, tvQuantity, tvUnit;
     private Button btnAction, btnFavorite;
-    private DatabaseReference databaseReference,favoritesReference;
+    private DatabaseReference databaseReference,favoritesReference, cartRef;
     private DecimalFormat decimalFormat;
     private ImageButton btnBack;
     private Drink currentDrink;
+    private Cart cart;
+    private FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +50,9 @@ public class DrinkDetailActivity extends AppCompatActivity {
 
         // Lấy drinkId từ Intent
         long drinkId = getIntent().getLongExtra("id",0);
-//        if (drinkId == null) {
-//            Toast.makeText(this, "Không tìm thấy ID đồ uống", Toast.LENGTH_SHORT).show();
-//            finish();
-//            return;
-//        }
+
+        // Check hiện diện đồ uống
+        checkDrinkFav();
 
         // Kết nối Firebase
         databaseReference = FirebaseDatabase.getInstance().getReference("TinkDrao/Drink").child(String.valueOf(drinkId));
@@ -58,9 +62,7 @@ public class DrinkDetailActivity extends AppCompatActivity {
 
         // Thêm sự kiện click cho nút
         btnAction.setOnClickListener(v -> {
-            // Xử lý sự kiện click (ví dụ: thêm vào giỏ hàng)
-            Toast.makeText(this, "Đã thêm " + tvName.getText() + " vào giỏ hàng", Toast.LENGTH_SHORT).show();
-            // Bạn có thể thêm logic để lưu vào giỏ hàng ở đây
+            addToCart(currentDrink);
         });
         // Thêm sự kiện click cho nút Back
         btnBack.setOnClickListener(v -> {
@@ -72,6 +74,61 @@ public class DrinkDetailActivity extends AppCompatActivity {
                 addToFavorites(currentDrink);
             } else {
                 Toast.makeText(this, "Đang tải dữ liệu, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void addToCart(Drink drink) {
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+        cartRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Cart/"+mUser.getUid());
+        String drinkId = String.valueOf(getIntent().getLongExtra("id", 0));
+        cartRef.child(drinkId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Nếu sản phẩm đã có trong giỏ hàng, cập nhật số lượng
+                    Cart existingCart = snapshot.getValue(Cart.class);
+                    if (existingCart != null) {
+                        int newQuantity = existingCart.getQuantity() + 1;
+                        cartRef.child(drinkId).child("quantity").setValue(newQuantity);
+                    }
+                } else {
+                    // Nếu sản phẩm chưa có, thêm mới vào giỏ hàng
+                    Cart newCart = new Cart(Long.valueOf(drinkId), 1);
+                    cartRef.child(drinkId).setValue(newCart);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void checkDrinkFav() {
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        favoritesReference = FirebaseDatabase.getInstance().getReference("TinkDrao/Favorites/"+mUser.getUid());
+
+        String drinkId = String.valueOf(getIntent().getLongExtra("id", 0));
+
+        favoritesReference.child(drinkId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    btnFavorite.setText("Đã yêu thích");
+                    btnFavorite.setBackgroundTintList(ContextCompat.getColorStateList(DrinkDetailActivity.this, android.R.color.darker_gray));
+                } else {
+                    btnFavorite.setText("Thêm vào yêu thích");
+                    btnFavorite.setBackgroundTintList(ContextCompat.getColorStateList(DrinkDetailActivity.this, R.color.orange));
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(DrinkDetailActivity.this,
+                        "Lỗi: " + databaseError.getMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -138,38 +195,12 @@ public class DrinkDetailActivity extends AppCompatActivity {
         tvQuantity.setText("Số lượng: " + drink.getQuantity());
         tvUnit.setText("Đơn vị: " + drink.getUnit());
     }
-//    private void addToFavorites(Drink drink) {
-//        // Sử dụng drinkId làm key trong nhánh Favorites
-//        String drinkId = String.valueOf(getIntent().getLongExtra("id", 0));
-
-        // Lưu dữ liệu vào Firebase
-//        favoritesReference.child(drinkId).setValue(drink)
-//                .addOnSuccessListener(aVoid -> {
-//                    Toast.makeText(DrinkDetailActivity.this,
-//                            "Đã thêm " + drink.getName() + " vào danh sách yêu thích",
-//                            Toast.LENGTH_SHORT).show();
-//                })
-//                .addOnFailureListener(e -> {
-//                    Toast.makeText(DrinkDetailActivity.this,
-//                            "Lỗi khi thêm vào yêu thích: " + e.getMessage(),
-//                            Toast.LENGTH_SHORT).show();
-//                });
-//    }
         private void addToFavorites(Drink drink) {
-            if (favoritesReference == null) {
-                try {
-                    favoritesReference = FirebaseDatabase.getInstance().getReference("TinkDrao/Favorites");
-                } catch (Exception e) {
-                    Toast.makeText(this, "Lỗi khởi tạo Firebase: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }
+            mUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            favoritesReference = FirebaseDatabase.getInstance().getReference("TinkDrao/Favorites/"+mUser.getUid());
 
             String drinkId = String.valueOf(getIntent().getLongExtra("id", 0));
-            if (drinkId.equals("0")) {
-                Toast.makeText(this, "ID đồ uống không hợp lệ!", Toast.LENGTH_SHORT).show();
-                return;
-            }
 
             favoritesReference.child(drinkId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

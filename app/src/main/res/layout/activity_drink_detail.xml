@@ -22,14 +22,14 @@
             <!-- Nút Back -->
             <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_back"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Back Button"
                 android:padding="8dp"
-                android:scaleX="2"
-                android:scaleY="2"
+                android:scaleX="1"
+                android:scaleY="1"
                 android:layout_marginBottom="16dp"/>  <!-- Thêm khoảng cách phía dưới -->
 
             <ImageView
