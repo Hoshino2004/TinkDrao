@@ -4,10 +4,17 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +24,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.tinkdrao.adapter.DrinkAdapter;
 import com.example.tinkdrao.adapter.ImageSliderAdapter;
 import com.example.tinkdrao.model.Drink;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Drink> drinkList;
     private TextView tvViewAll;
 
+    FirebaseAuth mAuth;
+    FirebaseUser mUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,8 +62,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+
         setUpImageSlider();
         setUpRecyclerView();
+
+        FloatingActionButton btnSupport = findViewById(R.id.btnSupport);
+        // Xử lý nhấn với OnClickListener
+        btnSupport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
     }
 
     private void setUpRecyclerView() {
@@ -124,6 +147,32 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError error) {}
         });
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.mnUser) {
+            if (mUser == null) {
+                Intent intent = new Intent(this, Login_Activity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                if (!mUser.isEmailVerified()) {
+                    mAuth.signOut(); // Đăng xuất người dùng nếu họ chưa xác thực
+                    startActivity(new Intent(this, Login_Activity.class));
+                    finish();
+                } else {
+                    Intent intent = new Intent(MainActivity.this, User_Activity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
