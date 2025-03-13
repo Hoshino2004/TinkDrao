@@ -1,7 +1,11 @@
 package com.example.tinkdrao;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,12 +32,13 @@ public class DrinkDetailActivity extends AppCompatActivity {
 
     private ImageView ivDrinkImage;
     private TextView tvName, tvPrice, tvDiscount, tvDrinkType, tvPurchaseCount, tvQuantity, tvUnit;
-    private Button btnAction, btnFavorite;
+    private Button btnAction, btnFavorite, btnIQ, btnDQ;
+    private int quantity;
+    private EditText edtQ;
     private DatabaseReference databaseReference,favoritesReference, cartRef;
     private DecimalFormat decimalFormat;
     private ImageButton btnBack;
     private Drink currentDrink;
-    private Cart cart;
     private FirebaseUser mUser;
 
     @Override
@@ -51,11 +56,90 @@ public class DrinkDetailActivity extends AppCompatActivity {
         // Lấy drinkId từ Intent
         long drinkId = getIntent().getLongExtra("id",0);
 
-        // Check hiện diện đồ uống
-        checkDrinkFav();
-
         // Kết nối Firebase
         databaseReference = FirebaseDatabase.getInstance().getReference("TinkDrao/Drink").child(String.valueOf(drinkId));
+
+        // Nút tăng giảm số lượng
+        btnDQ.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(edtQ.getText().toString().equals("1"))
+                {
+                    Toast.makeText(DrinkDetailActivity.this, "Số lượng bắt buộc phải từ 1 trở lên", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    quantity = Integer.valueOf(edtQ.getText().toString())-1;
+                    edtQ.setText(String.valueOf(quantity));
+                }
+            }
+        });
+
+        btnIQ.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists())
+                        {
+                            Drink drink = snapshot.getValue(Drink.class);
+                            quantity = Integer.valueOf(edtQ.getText().toString())+1;
+                            if(quantity>drink.getQuantity())
+                            {
+                                Toast.makeText(DrinkDetailActivity.this, "Số lượng không phù hợp", Toast.LENGTH_SHORT).show();
+                                quantity = Integer.valueOf(edtQ.getText().toString())-1;
+                            }
+                            else {
+                                edtQ.setText(String.valueOf(quantity));
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+            }
+        });
+
+        // EditText số lượng
+        edtQ.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().isEmpty()) {
+                    edtQ.setText("1");
+                    return; // Nếu trống thì không kiểm tra
+                }
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists())
+                        {
+                            Drink drink = snapshot.getValue(Drink.class);
+                            if(Integer.parseInt(editable.toString()) > drink.getQuantity())
+                            {
+                                edtQ.setText(String.valueOf(drink.getQuantity()));
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+            }
+        });
+
+        // Check hiện diện đồ uống
+        checkDrinkFav();
 
         // Lắng nghe thay đổi dữ liệu realtime
         loadDrinkData();
@@ -89,13 +173,27 @@ public class DrinkDetailActivity extends AppCompatActivity {
                     // Nếu sản phẩm đã có trong giỏ hàng, cập nhật số lượng
                     Cart existingCart = snapshot.getValue(Cart.class);
                     if (existingCart != null) {
-                        int newQuantity = existingCart.getQuantity() + 1;
+                        int newQuantity = existingCart.getQuantity() + Integer.valueOf(edtQ.getText().toString());
                         cartRef.child(drinkId).child("quantity").setValue(newQuantity);
                     }
                 } else {
-                    // Nếu sản phẩm chưa có, thêm mới vào giỏ hàng
-                    Cart newCart = new Cart(Long.valueOf(drinkId), 1);
-                    cartRef.child(drinkId).setValue(newCart);
+                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if(snapshot.exists())
+                            {
+                                Drink drinkCrt = snapshot.getValue(Drink.class);
+                                // Nếu sản phẩm chưa có, thêm mới vào giỏ hàng
+                                Cart newCart = new Cart(Long.valueOf(drinkId), drinkCrt.getImageUrl(), drinkCrt.getName(), drinkCrt.getPrice(), drinkCrt.getDiscount(), drinkCrt.getDrinkType(),Integer.valueOf(edtQ.getText().toString()), drinkCrt.getUnit());
+                                cartRef.child(drinkId).setValue(newCart);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
             }
 
@@ -145,6 +243,12 @@ public class DrinkDetailActivity extends AppCompatActivity {
         btnAction = findViewById(R.id.btnAction);
         btnBack = findViewById(R.id.btnBack);
         btnFavorite = findViewById(R.id.btnFavorite);
+
+        //Quantity
+        btnDQ = findViewById(R.id.btnDecrease);
+        btnIQ = findViewById(R.id.btnIncrease);
+        edtQ = findViewById(R.id.edtQuantity);
+        edtQ.setText("1");
     }
 
     private void loadDrinkData() {
@@ -192,7 +296,7 @@ public class DrinkDetailActivity extends AppCompatActivity {
 
         tvDrinkType.setText("Loại: " + drink.getDrinkType());
         tvPurchaseCount.setText("Đã bán: " + drink.getPurchaseCount());
-        tvQuantity.setText("Số lượng: " + drink.getQuantity());
+        tvQuantity.setText("Tồn kho: " + drink.getQuantity());
         tvUnit.setText("Đơn vị: " + drink.getUnit());
     }
         private void addToFavorites(Drink drink) {

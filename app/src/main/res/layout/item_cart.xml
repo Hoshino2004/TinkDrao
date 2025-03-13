@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="220dp"
+    android:layout_height="200dp"
     card_view:cardCornerRadius="12dp"
     card_view:cardElevation="4dp"
     android:layout_margin="8dp">
@@ -16,53 +16,127 @@
         <!-- Ảnh nước -->
         <ImageView
             android:id="@+id/drinkImage"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_width="180dp"
+            android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:contentDescription="Drink Image"/>
 
         <!-- Tên nước -->
+
+        <!-- Giá gốc -->
+
         <TextView
             android:id="@+id/drinkName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Drink Name"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#2C3E50"
-            android:paddingHorizontal="8dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="4dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_toEndOf="@+id/drinkImage"
             android:gravity="center"
-            android:layout_below="@id/drinkImage"/>
+            android:paddingHorizontal="8dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="4dp"
+            android:text="Drink Name"
+            android:textColor="#2C3E50"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:textStyle="bold" />
 
-        <!-- Giá gốc -->
+        <!-- Giá đã giảm -->
         <TextView
             android:id="@+id/drinkOriginalPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="$4.00"
-            android:textSize="12sp"
-            android:textColor="#7F8C8D"
+            android:layout_below="@id/drinkName"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_toEndOf="@+id/drinkImage"
             android:gravity="center"
             android:paddingHorizontal="8dp"
-            android:layout_below="@id/drinkName"/>
+            android:text="$4.00"
+            android:textColor="#7F8C8D"
+            android:textSize="16sp"/>
 
-        <!-- Giá đã giảm -->
+        <!-- Icon thùng rác -->
+
         <TextView
             android:id="@+id/drinkDiscountedPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="$3.50"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#E74C3C"
+            android:layout_below="@+id/drinkOriginalPrice"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_toEndOf="@+id/drinkImage"
             android:gravity="center"
             android:paddingHorizontal="8dp"
             android:paddingBottom="8dp"
-            android:layout_below="@id/drinkOriginalPrice"/>
+            android:text="$3.50"
+            android:textColor="#E74C3C"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/drinkQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/drinkDiscountedPrice"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_toEndOf="@+id/drinkImage"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:paddingBottom="8dp"
+            android:text="Tồn kho: 12"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
-        <!-- Icon thùng rác -->
+        <Button
+            android:id="@+id/btnDecreaseCart"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/drinkQuantity"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_toEndOf="@+id/drinkImage"
+            android:background="@drawable/background_button_quantity"
+            android:elevation="10dp"
+            android:text="-"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtQuantityCart"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/drinkQuantity"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="47dp"
+            android:layout_toEndOf="@+id/btnDecreaseCart"
+            android:gravity="center"
+            android:inputType="number"
+            android:textAlignment="center"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/btnIncreaseCart"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/drinkQuantity"
+            android:layout_margin="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_toEndOf="@+id/edtQuantityCart"
+            android:background="@drawable/background_button_quantity"
+            android:elevation="10dp"
+            android:text="+"
+            android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/btnDeleteFormCart"
             android:layout_width="32dp"
@@ -72,6 +146,5 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_margin="8dp"/>
-
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
