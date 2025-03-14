@@ -15,14 +15,32 @@
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".PromotionListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".PromotionDetailActivity"
+            android:exported="true" />
+        <activity
+            android:name=".CreatePromotionActivity"
+            android:exported="true" />
+        <activity
+            android:name=".DrinkDetailActivity2"
+            android:exported="true" />
+        <activity
+            android:name=".AddProductActivity"
+            android:exported="true" /> <!-- Khai báo MainActivity -->
+        <activity
+            android:name=".DrinkListActivity"
+            android:exported="true" /> <!-- Khai báo MainActivity -->
+        <activity
             android:name=".Cart_Activity"
             android:exported="false" />
         <activity
             android:name=".Favorite_Drink_Activity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".DrinkDetailActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".User_Activity"
             android:exported="false" />
@@ -36,11 +54,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".SearchDrinkActivity"
-            android:exported="false"
+            android:exported="true"
             android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

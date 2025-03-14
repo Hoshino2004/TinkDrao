@@ -321,6 +321,13 @@ public class User_Activity extends AppCompatActivity {
                     }
                     if (roleUserDetail.equals("Admin")) {
                         btnChung.setText("Quản lý \n sản phẩm");
+                        btnChung.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(User_Activity.this, DrinkListActivity.class );
+                                startActivity(intent);
+                            }
+                        });
 //                        btnChung.setOnClickListener(new View.OnClickListener() {
 //                            @Override
 //                            public void onClick(View view) {

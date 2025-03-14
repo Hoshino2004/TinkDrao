@@ -1,6 +1,8 @@
 package com.example.tinkdrao.model;
 
-public class Drink {
+import java.io.Serializable;
+
+public class Drink implements Serializable {
     private long id;
     private String imageUrl;
 
