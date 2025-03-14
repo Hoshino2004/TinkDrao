@@ -51,11 +51,13 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.DrinkViewHol
         // Hiển thị giá gốc nếu có giảm giá
         if (drink.getDiscount() > 0) {
             double discountedPrice = drink.getPrice() * (100 - drink.getDiscount()) / 100;
+            holder.drinkDiscountedPercent.setText("-" + decimalFormat.format(drink.getDiscount()) + "%");
             holder.drinkDiscountedPrice.setText(decimalFormat.format((int) discountedPrice) + "₫");
             holder.drinkOriginalPrice.setText(decimalFormat.format((int) drink.getPrice()) + "₫");
             holder.drinkOriginalPrice.setVisibility(View.VISIBLE);
         } else {
             holder.drinkOriginalPrice.setVisibility(View.GONE);
+            holder.drinkDiscountedPercent.setVisibility(View.GONE);
             holder.drinkDiscountedPrice.setText(decimalFormat.format((int) drink.getPrice()) + "₫");
         }
 
@@ -83,6 +85,8 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.DrinkViewHol
         public TextView drinkName;
         public TextView drinkOriginalPrice;
         public TextView drinkDiscountedPrice;
+        public TextView drinkDiscountedPercent;
+
         public DrinkViewHolder(@NonNull View itemView) {
             super(itemView);
             drinkImage = itemView.findViewById(R.id.drinkImage);
@@ -92,6 +96,8 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.DrinkViewHol
             drinkOriginalPrice.setPaintFlags(drinkOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
             drinkDiscountedPrice = itemView.findViewById(R.id.drinkDiscountedPrice);
+
+            drinkDiscountedPercent = itemView.findViewById(R.id.drinkDiscountPercent);
         }
     }
 }

@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
 
-        setUpImageSlider();
         setUpRecyclerView();
+        setUpImageSlider();
 
     }
 
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
     private void setUpImageSlider() {
         viewPager = findViewById(R.id.viewPager);
         imageUrls = new ArrayList<>();
-        adapter = new ImageSliderAdapter(this, imageUrls);
+        adapter = new ImageSliderAdapter(this, drinkList);
         viewPager.setAdapter(adapter);
 
         // Tạo Runnable để chuyển trang
@@ -147,9 +147,11 @@ public class MainActivity extends AppCompatActivity {
                 int currentItem = viewPager.getCurrentItem();
                 int itemCount = viewPager.getAdapter().getItemCount();
 
-                // Chuyển sang trang tiếp theo (vòng lại nếu hết)
-                int nextItem = (currentItem + 1) % itemCount;
-                viewPager.setCurrentItem(nextItem, true);
+                if (itemCount != 0) {
+                    // Chuyển sang trang tiếp theo (vòng lại nếu hết)
+                    int nextItem = (currentItem + 1) % itemCount;
+                    viewPager.setCurrentItem(nextItem, true);
+                }
 
                 // Đặt lại handler (chỉ một runnable chạy duy nhất)
                 handler.postDelayed(this, 5000);

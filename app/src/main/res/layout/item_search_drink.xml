@@ -42,15 +42,31 @@
                 android:textStyle="bold"
                 android:textColor="#2C3E50"/>
 
-            <!-- Giá gốc -->
-            <TextView
-                android:id="@+id/drinkSearchOriginalPrice"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="$4.00"
-                android:textSize="14sp"
-                android:textColor="#7F8C8D"
-                android:visibility="gone"/>
+                android:orientation="horizontal">
+
+                <!-- Giá gốc -->
+                <TextView
+                    android:id="@+id/drinkSearchOriginalPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$4.00"
+                    android:textSize="14sp"
+                    android:textColor="#7F8C8D"
+                    android:visibility="visible"/>
+
+                <!-- Phần trăm giảm giá -->
+                <TextView
+                    android:id="@+id/drinkSearchDiscountPercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="-25%"
+                    android:textSize="14sp"
+                    android:textColor="#27AE60"/>
+            </LinearLayout>
 
             <!-- Giá đã giảm -->
             <TextView

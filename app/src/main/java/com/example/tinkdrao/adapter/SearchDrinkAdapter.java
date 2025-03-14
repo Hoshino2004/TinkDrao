@@ -49,11 +49,13 @@ public class SearchDrinkAdapter extends RecyclerView.Adapter<SearchDrinkAdapter.
         // Hiển thị giá gốc nếu có giảm giá
         if (drink.getDiscount() > 0) {
             double discountedPrice = drink.getPrice() * (100 - drink.getDiscount()) / 100;
+            holder.drinkDiscountedPercent.setText("-" + decimalFormat.format(drink.getDiscount()) + "%");
             holder.drinkDiscountedPrice.setText(decimalFormat.format((int) discountedPrice) + "₫");
             holder.drinkOriginalPrice.setText(decimalFormat.format((int) drink.getPrice()) + "₫");
             holder.drinkOriginalPrice.setVisibility(View.VISIBLE);
         } else {
             holder.drinkOriginalPrice.setVisibility(View.GONE);
+            holder.drinkDiscountedPercent.setVisibility(View.GONE);
             holder.drinkDiscountedPrice.setText(decimalFormat.format((int) drink.getPrice()) + "₫");
         }
 
@@ -123,6 +125,7 @@ public class SearchDrinkAdapter extends RecyclerView.Adapter<SearchDrinkAdapter.
         TextView drinkName;
         TextView drinkOriginalPrice;
         TextView drinkDiscountedPrice;
+        TextView drinkDiscountedPercent;
 
         public DrinkViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -133,6 +136,8 @@ public class SearchDrinkAdapter extends RecyclerView.Adapter<SearchDrinkAdapter.
             drinkOriginalPrice.setPaintFlags(drinkOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
             drinkDiscountedPrice = itemView.findViewById(R.id.drinkSearchDiscountedPrice);
+
+            drinkDiscountedPercent = itemView.findViewById(R.id.drinkSearchDiscountPercent);
         }
     }
 }

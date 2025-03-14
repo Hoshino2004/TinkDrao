@@ -95,6 +95,8 @@
                 android:overScrollMode="never"/>
 
         </LinearLayout>
+
+
     </androidx.core.widget.NestedScrollView>
 
 </FrameLayout>

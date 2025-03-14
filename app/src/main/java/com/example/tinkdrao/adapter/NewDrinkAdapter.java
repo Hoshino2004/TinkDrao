@@ -1,6 +1,9 @@
 package com.example.tinkdrao.adapter;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.tinkdrao.DrinkDetailActivity;
 import com.example.tinkdrao.R;
 import com.example.tinkdrao.model.Drink;
 
@@ -57,11 +61,13 @@ public class NewDrinkAdapter extends RecyclerView.Adapter<NewDrinkAdapter.NewDri
         // Hiển thị giá gốc nếu có giảm giá
         if (drink.getDiscount() > 0) {
             double discountedPrice = drink.getPrice() * (100 - drink.getDiscount()) / 100;
+            holder.drinkDiscountedPercent.setText("-" + decimalFormat.format(drink.getDiscount()) + "%");
             holder.drinkDiscountedPrice.setText(decimalFormat.format((int) discountedPrice) + "₫");
             holder.drinkOriginalPrice.setText(decimalFormat.format((int) drink.getPrice()) + "₫");
             holder.drinkOriginalPrice.setVisibility(View.VISIBLE);
         } else {
             holder.drinkOriginalPrice.setVisibility(View.GONE);
+            holder.drinkDiscountedPercent.setVisibility(View.GONE);
             holder.drinkDiscountedPrice.setText(decimalFormat.format((int) drink.getPrice()) + "₫");
         }
 
@@ -71,6 +77,13 @@ public class NewDrinkAdapter extends RecyclerView.Adapter<NewDrinkAdapter.NewDri
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.loading)
                 .into(holder.drinkImage);
+
+        // Thêm sự kiện click để chuyển sang DrinkDetailActivity
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DrinkDetailActivity.class);
+            intent.putExtra("id", drink.getId()); // Truyền ID của sản phẩm
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -108,6 +121,7 @@ public class NewDrinkAdapter extends RecyclerView.Adapter<NewDrinkAdapter.NewDri
         TextView drinkName;
         TextView drinkOriginalPrice;
         TextView drinkDiscountedPrice;
+        TextView drinkDiscountedPercent;
 
         public NewDrinkViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -118,6 +132,7 @@ public class NewDrinkAdapter extends RecyclerView.Adapter<NewDrinkAdapter.NewDri
             drinkOriginalPrice.setPaintFlags(drinkOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
             drinkDiscountedPrice = itemView.findViewById(R.id.newDrinkDiscountedPrice);
+            drinkDiscountedPercent = itemView.findViewById(R.id.newDrinkDiscountPercent);
         }
     }
 }

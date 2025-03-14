@@ -33,20 +33,39 @@
             android:textColor="#2C3E50"
             android:paddingHorizontal="8dp"
             android:paddingTop="8dp"
-            android:paddingBottom="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:gravity="center"/>
 
-        <!-- Giá gốc (bị gạch ngang) -->
-        <TextView
-            android:id="@+id/drinkOriginalPrice"
+        <!-- Layout cho giá gốc và phần trăm giảm giá -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="$4.00"
-            android:textSize="12sp"
-            android:textColor="#7F8C8D"
+            android:orientation="horizontal"
             android:gravity="center"
             android:paddingHorizontal="8dp"
-            android:visibility="visible"/>
+            android:paddingTop="4dp">
+
+            <!-- Giá gốc (bị gạch ngang) -->
+            <TextView
+                android:id="@+id/drinkOriginalPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$4.00"
+                android:textSize="12sp"
+                android:textColor="#7F8C8D"
+                android:paddingEnd="8dp"
+                android:visibility="visible"/>
+
+            <!-- Phần trăm giảm giá -->
+            <TextView
+                android:id="@+id/drinkDiscountPercent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-25%"
+                android:textSize="12sp"
+                android:textColor="#27AE60"/>
+        </LinearLayout>
 
         <!-- Giá đã giảm -->
         <TextView
@@ -59,6 +78,7 @@
             android:textColor="#E74C3C"
             android:gravity="center"
             android:paddingHorizontal="8dp"
+            android:paddingTop="4dp"
             android:paddingBottom="8dp"/>
 
     </LinearLayout>
