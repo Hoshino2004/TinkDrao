@@ -9,4 +9,9 @@
     <color name="orange_500">#FF9800</color>
     <color name="orange_200">#FFCC80</color>
     <color name="orange">#FF5722</color>
+
+
+    <color name="colorPrimary">#FFFFFF</color> <!-- Màu thanh Top Bar -->
+    <color name="colorPrimaryVariant">#C4411E</color> <!-- Màu nhấn -->
+
 </resources>

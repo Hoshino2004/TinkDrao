@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- ImageView để chọn ảnh -->
+        <ImageView
+            android:id="@+id/iv_product_image"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:scaleType="centerCrop"
+            android:background="@android:color/darker_gray"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <EditText
+            android:id="@+id/et_product_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tên đồ uống" />
+
+        <EditText
+            android:id="@+id/et_quantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Số lượng"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/et_default_option_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Giá"
+            android:inputType="numberDecimal"
+            android:padding="8dp" />
+
+        <EditText
+            android:id="@+id/et_discount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Giảm giá"
+            android:inputType="numberDecimal"
+            android:padding="8dp" />
+
+        <!-- Spinner cho loại nước -->
+        <Spinner
+            android:id="@+id/spinner_water_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+             />
+
+        <!-- Spinner cho đơn vị -->
+        <Spinner
+            android:id="@+id/spinner_unit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+             />
+
+        <Button
+            android:id="@+id/btn_add_product"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thêm đồ uống"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>
