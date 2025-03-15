@@ -174,7 +174,26 @@ public class DrinkDetailActivity extends AppCompatActivity {
                     Cart existingCart = snapshot.getValue(Cart.class);
                     if (existingCart != null) {
                         int newQuantity = existingCart.getQuantity() + Integer.valueOf(edtQ.getText().toString());
-                        cartRef.child(drinkId).child("quantity").setValue(newQuantity);
+                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if(snapshot.exists())
+                                {
+                                    Drink drink1 = snapshot.getValue(Drink.class);
+                                    if(newQuantity > drink1.getQuantity())
+                                    {
+                                        Toast.makeText(DrinkDetailActivity.this, "Không thể thêm vào giỏ hàng vượt quá số lượng", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        Toast.makeText(DrinkDetailActivity.this, "Đã cập nhật số lượng trong giỏ hàng: "+newQuantity, Toast.LENGTH_SHORT).show();
+                                        cartRef.child(drinkId).child("quantity").setValue(newQuantity);
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                            }
+                        });
                     }
                 } else {
                     databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -186,6 +205,7 @@ public class DrinkDetailActivity extends AppCompatActivity {
                                 // Nếu sản phẩm chưa có, thêm mới vào giỏ hàng
                                 Cart newCart = new Cart(Long.valueOf(drinkId), drinkCrt.getImageUrl(), drinkCrt.getName(), drinkCrt.getPrice(), drinkCrt.getDiscount(), drinkCrt.getDrinkType(),Integer.valueOf(edtQ.getText().toString()), drinkCrt.getUnit());
                                 cartRef.child(drinkId).setValue(newCart);
+                                Toast.makeText(DrinkDetailActivity.this, "Đã thêm vào giỏ hàng!", Toast.LENGTH_SHORT).show();
                             }
                         }
 

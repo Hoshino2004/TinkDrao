@@ -1,13 +1,15 @@
 package com.example.tinkdrao;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.tinkdrao.adapter.CartAdapter;
-import com.example.tinkdrao.adapter.DrinkAdapter;
 import com.example.tinkdrao.model.Cart;
 import com.example.tinkdrao.model.Drink;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -30,7 +31,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
@@ -38,9 +38,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cart_Activity extends AppCompatActivity {
-
     TextView totalPrice;
     RecyclerView recyclerViewCart;
+    CheckBox checkSelectAll;
+    Button buttonPay;
     FirebaseUser mUser;
     LinearLayoutManager linearLayoutManager;
     DatabaseReference cartRef, drinkRef;
@@ -48,6 +49,9 @@ public class Cart_Activity extends AppCompatActivity {
     long total = 0;
     int quantity = 0;
     private DecimalFormat decimalFormat;
+    private boolean isMultiSelectMode = false;
+    private List<Cart> selectedItems = new ArrayList<>();
+    private List<Cart> cartItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,15 +62,18 @@ public class Cart_Activity extends AppCompatActivity {
         decimalFormat.setDecimalSeparatorAlwaysShown(false);
 
         getSupportActionBar().setTitle("Giỏ hàng");
-
-        // Hiển thị nút Back trên ActionBar
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         totalPrice = findViewById(R.id.totalPrice);
         recyclerViewCart = findViewById(R.id.recyclerViewCart);
+        checkSelectAll = findViewById(R.id.checkSelectAll);
+        buttonPay = findViewById(R.id.buttonPay);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        totalPrice.setText("0₫");
+        buttonPay.setText("Kiểm tra");
 
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setReverseLayout(true);
@@ -74,31 +81,78 @@ public class Cart_Activity extends AppCompatActivity {
 
         cartRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Cart").child(mUser.getUid());
         drinkRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Drink");
+
+        // Sự kiện khi nhấn CheckBox "Tất cả"
+        checkSelectAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                isMultiSelectMode = true;
+                selectedItems.clear();
+                selectedItems.addAll(cartItems);
+                updateSelectedTotalPrice();
+                updateActionBarTitle();
+                updateButtonPayText();
+                if (firebaseRecyclerAdapter != null) {
+                    firebaseRecyclerAdapter.notifyDataSetChanged();
+                }
+            } else {
+                isMultiSelectMode = false;
+                selectedItems.clear();
+                updateSelectedTotalPrice();
+                updateActionBarTitle();
+                updateButtonPayText();
+                if (firebaseRecyclerAdapter != null) {
+                    firebaseRecyclerAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        // Sự kiện khi nhấn buttonPay
+        buttonPay.setOnClickListener(v -> {
+            if (isMultiSelectMode && !selectedItems.isEmpty()) {
+                Intent intent = new Intent(Cart_Activity.this, Order_Activity.class);
+                intent.putExtra("selectedItems", new ArrayList<>(selectedItems));
+                startActivity(intent);
+            } else {
+                Toast.makeText(Cart_Activity.this, "Vui lòng chọn ít nhất một sản phẩm để thanh toán", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         showData();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Làm mới dữ liệu khi quay lại từ Order_Activity
+        selectedItems.clear();
+        isMultiSelectMode = false;
+        checkSelectAll.setChecked(false);
+        updateActionBarTitle();
+        updateSelectedTotalPrice();
+        updateButtonPayText();
+        showData(); // Cập nhật lại danh sách giỏ hàng
+    }
+
     private void showData() {
         cartRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
-                    totalPrice.setText("Tổng tiền: 0 ₫");
+                    totalPrice.setText("0₫");
+                    updateRecyclerView(new ArrayList<>());
                     return;
                 }
 
-                // Danh sách trung gian để lưu trữ dữ liệu
-                List<Cart> cartItems = new ArrayList<>();
-
-                // Lấy dữ liệu từ cartRef
+                cartItems.clear();
                 for (DataSnapshot cartSnapshot : snapshot.getChildren()) {
                     String drinkId = cartSnapshot.getKey();
                     Cart cart = cartSnapshot.getValue(Cart.class);
                     if (cart != null) {
-                        cart.setId(Long.valueOf(drinkId)); // Gán ID cho cart
+                        cart.setId(Long.valueOf(drinkId));
                         cartItems.add(cart);
                     }
                 }
 
-                // Lấy thông tin đồ uống cho từng sản phẩm trong giỏ hàng
                 for (Cart cart : cartItems) {
                     drinkRef.child(String.valueOf(cart.getId())).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -110,13 +164,6 @@ public class Cart_Activity extends AppCompatActivity {
                                     cart.setImageUrl(drink.getImageUrl());
                                     cart.setPrice(drink.getPrice());
                                     cart.setDiscount(drink.getDiscount());
-
-                                    // Tính tổng tiền
-                                    double discountedPrice = drink.getPrice() - (drink.getPrice() * drink.getDiscount() / 100);
-                                    total += discountedPrice * cart.getQuantity();
-                                    totalPrice.setText("Tổng tiền: " + decimalFormat.format((int) total) + " ₫");
-
-                                    // Cập nhật adapter khi tất cả dữ liệu đã sẵn sàng
                                     updateRecyclerView(cartItems);
                                 }
                             }
@@ -138,15 +185,15 @@ public class Cart_Activity extends AppCompatActivity {
     }
 
     private void updateRecyclerView(List<Cart> cartItems) {
-        // Dừng adapter cũ nếu có
+        this.cartItems = cartItems;
+
         if (firebaseRecyclerAdapter != null) {
             firebaseRecyclerAdapter.stopListening();
         }
 
-        // Tạo adapter mới với danh sách cartItems
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Cart, CartAdapter.CartViewHolder>(
                 new FirebaseRecyclerOptions.Builder<Cart>()
-                        .setQuery(cartRef, Cart.class) // Giữ query gốc nếu cần
+                        .setQuery(cartRef, Cart.class)
                         .build()) {
             @Override
             protected void onBindViewHolder(@NonNull CartAdapter.CartViewHolder holder, int position, @NonNull Cart cart) {
@@ -170,105 +217,143 @@ public class Cart_Activity extends AppCompatActivity {
                 drinkRef.child(String.valueOf(cart.getId())).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if(snapshot.exists())
-                        {
+                        if (snapshot.exists()) {
                             Drink drink = snapshot.getValue(Drink.class);
-                            holder.drinkQuantity.setText("Tồn kho: "+ drink.getQuantity());
+                            holder.drinkQuantity.setText("Tồn kho: " + drink.getQuantity());
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
 
-                //Setup sẵn số lượng
                 holder.edtQC.setText(String.valueOf(cart.getQuantity()));
 
-                // Nút tăng giảm số lượng
-                holder.btnDQC.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(holder.edtQC.getText().toString().equals("1"))
-                        {
-                            Toast.makeText(Cart_Activity.this, "Số lượng bắt buộc phải từ 1 trở lên", Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            quantity = Integer.valueOf(holder.edtQC.getText().toString())-1;
-                            cartRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    cartRef.child(String.valueOf(cart.getId())).child("quantity").setValue(quantity);
-                                }
+                if (selectedItems.contains(cart)) {
+                    holder.itemView.setBackgroundColor(Color.LTGRAY);
+                } else {
+                    holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
+                holder.itemView.setOnLongClickListener(v -> {
+                    if (!isMultiSelectMode) {
+                        isMultiSelectMode = true;
+                        selectedItems.add(cart);
+                        holder.itemView.setBackgroundColor(Color.LTGRAY);
+                        notifyDataSetChanged();
+                        updateSelectedTotalPrice();
+                        updateActionBarTitle();
+                        updateButtonPayText();
+                    }
+                    return true;
+                });
 
-                                }
-                            });
-                            holder.edtQC.setText(String.valueOf(quantity));
+                holder.itemView.setOnClickListener(v -> {
+                    if (isMultiSelectMode) {
+                        if (selectedItems.contains(cart)) {
+                            selectedItems.remove(cart);
+                            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                            if (checkSelectAll.isChecked()) {
+                                checkSelectAll.setChecked(false);
+                            }
+                        } else if (!checkSelectAll.isChecked()) {
+                            selectedItems.add(cart);
+                            holder.itemView.setBackgroundColor(Color.LTGRAY);
+                            if (selectedItems.size() == cartItems.size()) {
+                                checkSelectAll.setChecked(true);
+                            }
                         }
+                        if (selectedItems.isEmpty()) {
+                            isMultiSelectMode = false;
+                        }
+                        notifyDataSetChanged();
+                        updateSelectedTotalPrice();
+                        updateActionBarTitle();
+                        updateButtonPayText();
                     }
                 });
 
-                holder.btnIQC.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        drinkRef.child(String.valueOf(cart.getId())).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if(snapshot.exists())
-                                {
-                                    Drink drink = snapshot.getValue(Drink.class);
-                                    quantity = Integer.valueOf(holder.edtQC.getText().toString())+1;
-                                    if(quantity>drink.getQuantity())
-                                    {
-                                        Toast.makeText(Cart_Activity.this, "Số lượng không phù hợp", Toast.LENGTH_SHORT).show();
-                                        quantity = Integer.valueOf(holder.edtQC.getText().toString())-1;
-                                    }
-                                    else {
-                                        holder.edtQC.setText(String.valueOf(quantity));
-                                        cartRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                cartRef.child(String.valueOf(cart.getId())).child("quantity").setValue(quantity);
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError error) {
-
-                                            }
-                                        });
-                                    }
-                                }
+                holder.btnDQC.setOnClickListener(view -> {
+                    if (isMultiSelectMode && selectedItems.contains(cart)) {
+                        Toast.makeText(Cart_Activity.this, "Không thể chỉnh sửa khi sản phẩm đã được chọn", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (holder.edtQC.getText().toString().equals("1")) {
+                        String cartId = String.valueOf(cart.getId());
+                        cartRef.child(cartId).removeValue().addOnSuccessListener(aVoid -> {
+                            cartItems.removeIf(item -> String.valueOf(item.getId()).equals(cartId));
+                            selectedItems.removeIf(item -> String.valueOf(item.getId()).equals(cartId));
+                            if (selectedItems.isEmpty()) {
+                                isMultiSelectMode = false;
+                                checkSelectAll.setChecked(false);
                             }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
+                            notifyDataSetChanged();
+                            updateSelectedTotalPrice();
+                            updateActionBarTitle();
+                            updateButtonPayText();
+                        }).addOnFailureListener(e -> {
+                            Log.e("Firebase", "Lỗi khi xóa sản phẩm: " + e.getMessage());
+                            Toast.makeText(Cart_Activity.this, "Không thể xóa sản phẩm", Toast.LENGTH_SHORT).show();
                         });
+                    } else {
+                        quantity = Integer.parseInt(holder.edtQC.getText().toString()) - 1;
+                        cartRef.child(String.valueOf(cart.getId())).child("quantity").setValue(quantity)
+                                .addOnSuccessListener(aVoid -> {
+                                    cart.setQuantity(quantity);
+                                    holder.edtQC.setText(String.valueOf(quantity));
+                                    updateSelectedTotalPrice();
+                                });
                     }
                 });
 
-                // Nút xóa khỏi giỏ hàng
+                holder.btnIQC.setOnClickListener(view -> {
+                    if (isMultiSelectMode && selectedItems.contains(cart)) {
+                        Toast.makeText(Cart_Activity.this, "Không thể chỉnh sửa khi sản phẩm đã được chọn", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    drinkRef.child(String.valueOf(cart.getId())).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                Drink drink = snapshot.getValue(Drink.class);
+                                quantity = Integer.parseInt(holder.edtQC.getText().toString()) + 1;
+                                if (quantity > drink.getQuantity()) {
+                                    Toast.makeText(Cart_Activity.this, "Số lượng không phù hợp", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    cartRef.child(String.valueOf(cart.getId())).child("quantity").setValue(quantity)
+                                            .addOnSuccessListener(aVoid -> {
+                                                cart.setQuantity(quantity);
+                                                holder.edtQC.setText(String.valueOf(quantity));
+                                                updateSelectedTotalPrice();
+                                            });
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
+                });
+
                 holder.btnDeleteFromCart.setOnClickListener(v -> {
+                    if (isMultiSelectMode && selectedItems.contains(cart)) {
+                        Toast.makeText(Cart_Activity.this, "Không thể xóa khi sản phẩm đã được chọn", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     String cartId = String.valueOf(cart.getId());
                     cartRef.child(cartId).removeValue().addOnSuccessListener(aVoid -> {
-                        // Xóa sản phẩm khỏi danh sách cartItems
-                        cartItems.removeIf(item -> String.valueOf(item.getId()).equals(String.valueOf(cartId)));
-
-                        // Tính lại tổng tiền
-                        total = 0;
-                        for (Cart cart1 : cartItems) {
-                            double discountedPrice1 = cart1.getPrice() - (cart1.getPrice() * cart1.getDiscount() / 100);
-                            total += discountedPrice1 * cart1.getQuantity();
+                        cartItems.removeIf(item -> String.valueOf(item.getId()).equals(cartId));
+                        selectedItems.removeIf(item -> String.valueOf(item.getId()).equals(cartId));
+                        if (selectedItems.isEmpty()) {
+                            isMultiSelectMode = false;
+                            checkSelectAll.setChecked(false);
                         }
-                        totalPrice.setText("Tổng tiền: " + decimalFormat.format((int) total) + " ₫");
-
-                        // Cập nhật RecyclerView (nếu cần)
-                        firebaseRecyclerAdapter.notifyDataSetChanged(); // Hoặc gọi updateRecyclerView() nếu bạn dùng hàm riêng
+                        notifyDataSetChanged();
+                        updateSelectedTotalPrice();
+                        updateActionBarTitle();
+                        updateButtonPayText();
                     }).addOnFailureListener(e -> {
                         Log.e("Firebase", "Lỗi khi xóa sản phẩm: " + e.getMessage());
                         Toast.makeText(Cart_Activity.this, "Không thể xóa sản phẩm", Toast.LENGTH_SHORT).show();
@@ -288,10 +373,51 @@ public class Cart_Activity extends AppCompatActivity {
         recyclerViewCart.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
     }
+
+    private void updateSelectedTotalPrice() {
+        if (isMultiSelectMode && !selectedItems.isEmpty()) {
+            total = 0;
+            for (Cart cart : selectedItems) {
+                double discountedPrice = cart.getPrice() * (100 - cart.getDiscount()) / 100;
+                total += discountedPrice * cart.getQuantity();
+            }
+            totalPrice.setText(decimalFormat.format((int) total) + "₫");
+            totalPrice.setTextColor(Color.parseColor("#FF3300"));
+        } else {
+            totalPrice.setText("0₫");
+            totalPrice.setTextColor(Color.parseColor("#000000"));
+        }
+    }
+
+    private void updateActionBarTitle() {
+        if (isMultiSelectMode) {
+            getSupportActionBar().setTitle("Đã chọn: " + selectedItems.size());
+        } else {
+            getSupportActionBar().setTitle("Giỏ hàng");
+        }
+    }
+
+    private void updateButtonPayText() {
+        if (isMultiSelectMode && !selectedItems.isEmpty()) {
+            buttonPay.setText("Thanh toán (" + selectedItems.size() + ")");
+        } else {
+            buttonPay.setText("Kiểm tra");
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            // Khi bấm nút Back, quay về Activity trước đó
+            if (isMultiSelectMode) {
+                isMultiSelectMode = false;
+                selectedItems.clear();
+                checkSelectAll.setChecked(false);
+                updateActionBarTitle();
+                updateSelectedTotalPrice();
+                updateButtonPayText();
+                firebaseRecyclerAdapter.notifyDataSetChanged();
+                return true;
+            }
             finish();
             return true;
         }

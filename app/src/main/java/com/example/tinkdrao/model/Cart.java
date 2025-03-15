@@ -1,6 +1,8 @@
 package com.example.tinkdrao.model;
 
-public class Cart {
+import java.io.Serializable;
+
+public class Cart implements Serializable {
     private long id;
     private String imageUrl;
     private String name;
