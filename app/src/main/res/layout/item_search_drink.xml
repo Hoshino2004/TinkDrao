@@ -15,13 +15,35 @@
         android:background="#FFFFFF"
         android:padding="8dp">
 
-        <!-- Ảnh nước -->
-        <ImageView
-            android:id="@+id/drinkSearchImage"
+        <!-- Container cho ảnh và thông báo hết hàng -->
+        <FrameLayout
             android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:scaleType="centerCrop"
-            android:contentDescription="Drink Image"/>
+            android:layout_height="100dp">
+
+            <!-- Ảnh nước -->
+            <ImageView
+                android:id="@+id/drinkSearchImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Drink Image"/>
+
+            <!-- TextView thông báo hết hàng -->
+            <TextView
+                android:id="@+id/drinkSearchSoldOutText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hết hàng"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:rotation="-20"
+                android:textColor="#FFFFFF"
+                android:background="#66000000"
+                android:padding="4dp"
+                android:layout_gravity="center"
+                android:visibility="visible"/>
+        </FrameLayout>
 
         <!-- Thông tin nước -->
         <LinearLayout

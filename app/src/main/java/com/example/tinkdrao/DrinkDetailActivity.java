@@ -375,6 +375,10 @@ public class DrinkDetailActivity extends AppCompatActivity {
         tvPurchaseCount.setText("Đã bán: " + drink.getPurchaseCount());
         tvQuantity.setText("Tồn kho: " + drink.getQuantity());
         tvUnit.setText("Đơn vị: " + drink.getUnit());
+
+        if (drink.getQuantity() == 0) {
+            btnAction.setVisibility(View.GONE);
+        }
     }
 
     private void addToFavorites(Drink drink) {

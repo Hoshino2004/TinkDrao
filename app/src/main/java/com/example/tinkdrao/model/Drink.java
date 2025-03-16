@@ -16,6 +16,7 @@ public class Drink implements Serializable {
     private int quantity; // Số lượng trong kho
     private String unit; // Đơn vị
     private String createdAt; // Thời gian thêm sản phẩm
+    private long totalSold; // Tổng số lượng đã bán (thêm trường này)
 
 
     public Drink() {
@@ -40,6 +41,16 @@ public class Drink implements Serializable {
         this.quantity = quantity;
         this.unit = unit;
         this.imageUrl = imageUrl;
+    }
+
+    public Drink(Long id, String name, int price, int discount, int quantity, String imageUrl) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.discount = discount;
+        this.quantity = quantity;
+        this.imageUrl = imageUrl;
+        this.totalSold = 0; // Mặc định là 0
     }
 
     public long getId() {
@@ -121,4 +132,7 @@ public class Drink implements Serializable {
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
+
+    public long getTotalSold() { return totalSold; }
+    public void setTotalSold(long totalSold) { this.totalSold = totalSold; }
 }

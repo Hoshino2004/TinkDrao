@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         drinkRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                drinkList.clear();
                 List<Drink> tempList = new ArrayList<>();
 
                 // Duyệt qua tất cả các node con trong "drinks"
@@ -116,12 +115,11 @@ public class MainActivity extends AppCompatActivity {
                     Drink drink = snapshot.getValue(Drink.class);
                     if (drink != null) {
                         tempList.add(drink);
-                        drinkList.add(drink);
                     }
                 }
 
                 // Cập nhật adapter khi có dữ liệu mới
-                drinkAdapter.notifyDataSetChanged();
+                drinkAdapter.updateList(tempList);
                 newDrinkAdapter.updateList(tempList);
             }
 
