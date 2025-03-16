@@ -12,8 +12,8 @@ public class Order implements Serializable {
     private Long total;
     private String id;
     private String statusPay;
-    private List<Drink> products;
-    public Order() {
+    private List<Drink> items; // Thêm trường này để lưu danh sách sản phẩm
+    public Order()  {
     }
 
     public Order(String nameUser, String phoneNo, String address, String createdAt, String statusOrder, Long total, String id, String statusPay) {
@@ -25,15 +25,7 @@ public class Order implements Serializable {
         this.total = total;
         this.id = id;
         this.statusPay = statusPay;
-    }
 
-    public Order(String createdAt, String address, Long total, String nameUser, String phoneNo, List<Drink> products) {
-        this.createdAt = createdAt;
-        this.address = address;
-        this.total = total;
-        this.nameUser = nameUser;
-        this.phoneNo = phoneNo;
-        this.products = products;
     }
 
     public String getNameUser() {
@@ -99,6 +91,4 @@ public class Order implements Serializable {
     public void setStatusPay(String statusPay) {
         this.statusPay = statusPay;
     }
-
-    public List<Drink> getProducts() { return products; }
 }

@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference("TinkDrao");
         drinkRef = databaseReference.child("Drink");
 
+
         tvViewAll = findViewById(R.id.tvViewAll);
         tvViewAll.setOnClickListener(new View.OnClickListener() {
             @Override
