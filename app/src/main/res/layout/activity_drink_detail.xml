@@ -8,174 +8,237 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
         app:cardBackgroundColor="@android:color/white">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- Nút Back -->
-            <ImageButton
-                android:id="@+id/btnBack"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/ic_back"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Back Button"
-                android:padding="8dp"
-                android:scaleX="1"
-                android:scaleY="1"
-                android:layout_marginBottom="16dp"/>  <!-- Thêm khoảng cách phía dưới -->
-
-            <ImageView
-                android:id="@+id/ivDrinkImage"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:contentDescription="Drink Image" />
-
-            <TextView
-                android:id="@+id/tvName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                android:textColor="#212121"
-                android:layout_marginTop="16dp"
-                android:paddingHorizontal="8dp"/>
+            android:layout_height="match_parent"
+            android:background="@drawable/gradient_background">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="12dp"
-                android:paddingHorizontal="8dp">
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Nút Back -->
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_back"
+                    android:background="@drawable/circle_button_background"
+                    android:contentDescription="Back Button"
+                    android:padding="8dp"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:layout_marginBottom="16dp"
+                    app:tint="#FFFFFF"/>
+
+                <ImageView
+                    android:id="@+id/ivDrinkImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Drink Image"
+                    android:background="@drawable/image_border_gradient"/>
 
                 <TextView
-                    android:id="@+id/tvPrice"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:textColor="#D81B60"/>
-
-                <TextView
-                    android:id="@+id/tvDiscount"
+                    android:id="@+id/tvRateUp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textColor="#4CAF50"/>
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvDrinkType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="#757575"
-                android:layout_marginTop="12dp"
-                android:paddingHorizontal="8dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="12dp"
-                android:paddingHorizontal="8dp">
+                    android:layout_marginTop="8dp"
+                    android:hint="Rate Up"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/rounded_tag"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"/>
 
                 <TextView
-                    android:id="@+id/tvQuantity"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:id="@+id/tvName"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textColor="#424242"/>
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="#2C3E50"
+                    android:layout_marginTop="8dp"
+                    android:paddingHorizontal="8dp"
+                    android:shadowColor="#40000000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="4"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp"
+                    android:paddingHorizontal="8dp">
+
+                    <TextView
+                        android:id="@+id/tvPrice"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textColor="#E91E63"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/tvDiscount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:background="@drawable/discount_tag"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"/>
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/tvUnit"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvDrinkType"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:textColor="#424242"/>
-            </LinearLayout>
+                    android:textColor="#7F8C8D"
+                    android:layout_marginTop="12dp"
+                    android:paddingHorizontal="8dp"
+                    android:drawableStart="@drawable/ic_drink_type"
+                    android:drawablePadding="8dp"/>
 
-            <TextView
-                android:id="@+id/tvPurchaseCount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#757575"
-                android:layout_marginTop="12dp"
-                android:paddingHorizontal="8dp"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/btnDecrease"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="5dp"
-                    app:cornerRadius="100dp"
-                    android:text="-"
-                    android:elevation="10dp"
-                    android:background="@drawable/background_button_quantity"
-                    android:textStyle="bold" />
-                <EditText
-                    android:id="@+id/edtQuantity"
-                    android:layout_width="100dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp"
+                    android:paddingHorizontal="8dp">
+
+                    <TextView
+                        android:id="@+id/tvQuantity"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="#34495E"/>
+
+                    <TextView
+                        android:id="@+id/tvUnit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="#34495E"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvPurchaseCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="#95A5A6"
+                    android:layout_marginTop="12dp"
+                    android:paddingHorizontal="8dp"
+                    android:drawableStart="@drawable/ic_purchase"
+                    android:drawablePadding="8dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal"
                     android:gravity="center"
-                    android:textAlignment="center"
-                    android:inputType="number"
-                    android:textColor="#000000" />
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/rounded_background"
+                    android:padding="4dp">
+
+                    <Button
+                        android:id="@+id/btnDecrease"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:text="-"
+                        android:textSize="18sp"
+                        android:textColor="#FFFFFF"
+                        android:background="@drawable/gradient_button"
+                        app:cornerRadius="20dp"
+                        android:elevation="4dp"/>
+
+                    <EditText
+                        android:id="@+id/edtQuantity"
+                        android:layout_width="100dp"
+                        android:layout_height="40dp"
+                        android:layout_marginHorizontal="8dp"
+                        android:gravity="center"
+                        android:textAlignment="center"
+                        android:inputType="number"
+                        android:textColor="#2C3E50"
+                        android:background="@drawable/rounded_edittext"
+                        android:text="1"/>
+
+                    <Button
+                        android:id="@+id/btnIncrease"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:text="+"
+                        android:textSize="18sp"
+                        android:textColor="#FFFFFF"
+                        android:background="@drawable/gradient_button"
+                        app:cornerRadius="20dp"
+                        android:elevation="4dp"/>
+                </LinearLayout>
+
                 <Button
-                    android:id="@+id/btnIncrease"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="5dp"
-                    app:cornerRadius="100dp"
-                    android:text="+"
-                    android:elevation="10dp"
-                    android:background="@drawable/background_button_quantity"
-                    android:textStyle="bold" />
+                    android:id="@+id/btnAction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Thêm vào giỏ hàng"
+                    android:textSize="16sp"
+                    android:textAllCaps="false"
+                    android:padding="12dp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/gradient_button_action"
+                    app:cornerRadius="24dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:elevation="6dp"
+                    android:drawableStart="@drawable/ic_cart"
+                    android:drawablePadding="8dp"/>
+
+                <Button
+                    android:id="@+id/btnFavorite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Thêm vào yêu thích"
+                    android:textSize="16sp"
+                    android:textAllCaps="false"
+                    android:layout_marginTop="12dp"
+                    android:padding="12dp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/gradient_button_favorite"
+                    app:cornerRadius="24dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:elevation="6dp"
+                    android:drawableStart="@drawable/ic_favorite"
+                    android:drawablePadding="8dp"/>
+
+                <Button
+                    android:id="@+id/btnRating"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Xem đánh giá"
+                    android:textSize="16sp"
+                    android:textAllCaps="false"
+                    android:layout_marginTop="12dp"
+                    android:padding="12dp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/gradient_button_rating"
+                    app:cornerRadius="24dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:elevation="6dp"
+                    android:drawableStart="@drawable/ic_rating"
+                    android:drawablePadding="8dp"/>
             </LinearLayout>
-
-            <Button
-                android:id="@+id/btnAction"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Thêm vào giỏ hàng"
-                android:textSize="16sp"
-                android:textAllCaps="false"
-                android:padding="12dp"
-                android:backgroundTint="#D81B60"
-                android:textColor="@android:color/white"
-                app:cornerRadius="24dp"
-                android:layout_marginHorizontal="16dp"/>
-
-            <!-- Nút Thêm vào yêu thích -->
-            <Button
-                android:id="@+id/btnFavorite"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Thêm vào yêu thích"
-                android:textSize="16sp"
-                android:textAllCaps="false"
-                android:layout_marginTop="12dp"
-                android:padding="12dp"
-                android:backgroundTint="#FF5722"
-                android:textColor="@android:color/white"
-                app:cornerRadius="24dp"
-                android:layout_marginHorizontal="16dp"/>
-
-        </LinearLayout>
+        </ScrollView>
     </androidx.cardview.widget.CardView>
 </ScrollView>
