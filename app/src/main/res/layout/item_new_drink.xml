@@ -82,4 +82,20 @@
             android:paddingBottom="8dp"/>
 
     </LinearLayout>
+
+    <!-- Chữ SOLD OUT -->
+    <TextView
+        android:id="@+id/soldOutText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SOLD OUT"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:background="#CC000000"
+        android:padding="8dp"
+        android:rotation="-20"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 </androidx.cardview.widget.CardView>

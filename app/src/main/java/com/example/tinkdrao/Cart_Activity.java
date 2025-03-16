@@ -52,11 +52,14 @@ public class Cart_Activity extends AppCompatActivity {
     private boolean isMultiSelectMode = false;
     private List<Cart> selectedItems = new ArrayList<>();
     private List<Cart> cartItems = new ArrayList<>();
+    static String phoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+
+        phoneNumber = getIntent().getStringExtra("phoneNo");
 
         decimalFormat = new DecimalFormat("#,###");
         decimalFormat.setDecimalSeparatorAlwaysShown(false);
@@ -79,7 +82,13 @@ public class Cart_Activity extends AppCompatActivity {
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
 
-        cartRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Cart").child(mUser.getUid());
+        if(mUser!=null)
+        {
+            cartRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Cart").child(mUser.getUid());
+        }
+        else {
+            cartRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Cart").child(phoneNumber);
+        }
         drinkRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Drink");
 
         // Sự kiện khi nhấn CheckBox "Tất cả"
@@ -111,6 +120,7 @@ public class Cart_Activity extends AppCompatActivity {
             if (isMultiSelectMode && !selectedItems.isEmpty()) {
                 Intent intent = new Intent(Cart_Activity.this, Order_Activity.class);
                 intent.putExtra("selectedItems", new ArrayList<>(selectedItems));
+                intent.putExtra("phoneNo",phoneNumber);
                 startActivity(intent);
             } else {
                 Toast.makeText(Cart_Activity.this, "Vui lòng chọn ít nhất một sản phẩm để thanh toán", Toast.LENGTH_SHORT).show();
@@ -418,7 +428,11 @@ public class Cart_Activity extends AppCompatActivity {
                 firebaseRecyclerAdapter.notifyDataSetChanged();
                 return true;
             }
-            finish();
+            // Chuyển về UserActivity
+            Intent intent = new Intent(Cart_Activity.this, User_Activity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish(); // Đóng Cart_Activity
             return true;
         }
         return super.onOptionsItemSelected(item);

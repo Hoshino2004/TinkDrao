@@ -1,7 +1,10 @@
 package com.example.tinkdrao;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -42,6 +46,7 @@ public class DrinkDetailActivity extends AppCompatActivity {
     private FirebaseUser mUser;
     private ValueEventListener drinkDataListener; // Lưu listener để hủy sau
     private boolean isActivityDestroyed = false;
+    private static String phoneNo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +59,8 @@ public class DrinkDetailActivity extends AppCompatActivity {
 
         // Khởi tạo views
         initializeViews();
+
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // Lấy drinkId từ Intent
         long drinkId = getIntent().getLongExtra("id", 0);
@@ -127,31 +134,105 @@ public class DrinkDetailActivity extends AppCompatActivity {
             }
         });
 
-        // Check hiện diện đồ uống trong danh sách yêu thích
-        checkDrinkFav();
+        if(mUser!=null)
+        {
+            // Check hiện diện đồ uống trong danh sách yêu thích
+            checkDrinkFav();
+        }
 
         // Lắng nghe thay đổi dữ liệu realtime
         loadDrinkData();
 
         // Thêm sự kiện click cho nút
         btnAction.setOnClickListener(v -> {
-            addToCart(currentDrink);
+            if(mUser!=null)
+            {
+                addToCart(mUser.getUid());
+            }
+            else {
+                if(phoneNo!=null)
+                {
+                    addToCart(phoneNo);
+                }
+                else {
+                    showPhoneInputDialog();
+                }
+            }
         });
 
         btnBack.setOnClickListener(v -> finish());
 
         btnFavorite.setOnClickListener(v -> {
-            if (currentDrink != null) {
-                addToFavorites(currentDrink);
-            } else {
-                Toast.makeText(this, "Đang tải dữ liệu, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+            if(mUser!=null)
+            {
+                if (currentDrink != null) {
+                    addToFavorites(currentDrink);
+                } else {
+                    Toast.makeText(this, "Đang tải dữ liệu, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else {
+                Toast.makeText(this, "Vui lòng đăng nhập để sử dụng chức năng này!", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void addToCart(Drink drink) {
-        mUser = FirebaseAuth.getInstance().getCurrentUser();
-        cartRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Cart/" + mUser.getUid());
+    private void showPhoneInputDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Nhập số điện thoại");
+
+        // Tạo EditText để nhập số điện thoại
+        final EditText input = new EditText(this);
+        input.setBackgroundResource(android.R.drawable.edit_text);
+        input.setInputType(InputType.TYPE_CLASS_PHONE);
+        builder.setView(input);
+
+        // Nút Xác nhận
+        builder.setPositiveButton("Xác nhận", (dialog, which) -> {
+            String phoneNumber = input.getText().toString().trim();
+            if (phoneNumber.startsWith("0") && phoneNumber.length() == 10) {
+                phoneNo = phoneNumber;
+                Intent intent = new Intent(DrinkDetailActivity.this, MainActivity.class);
+                intent.putExtra("phoneNo",phoneNo);
+                startActivity(intent);
+                // handlePhoneNumber(phoneNumber); // Gọi hàm xử lý ở đây nếu cần
+            } else {
+                Toast.makeText(DrinkDetailActivity.this, "Số điện thoại không hợp lệ!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.cancel());
+
+        // Hiển thị dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Kiểm tra khi nhập
+        input.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String phoneNumber = s.toString().trim();
+                if (!phoneNumber.startsWith("0")) {
+                    input.setError("Số điện thoại phải bắt đầu bằng số 0!");
+                } else if (phoneNumber.length() != 10) {
+                    input.setError("Số điện thoại phải đủ 10 chữ số!");
+                } else {
+                    input.setError(null); // Xóa lỗi nếu hợp lệ
+                }
+            }
+        });
+    }
+
+    private void addToCart(String uid) {
+        cartRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Cart/" + uid);
         String drinkId = String.valueOf(getIntent().getLongExtra("id", 0));
         cartRef.child(drinkId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

@@ -71,6 +71,11 @@ public class NewDrinkAdapter extends RecyclerView.Adapter<NewDrinkAdapter.NewDri
             holder.drinkDiscountedPrice.setText(decimalFormat.format((int) drink.getPrice()) + "₫");
         }
 
+        if(drink.getQuantity() == 0 )
+        {
+            holder.soldOutText.setVisibility(View.VISIBLE);
+        }
+
         // Load ảnh bằng Glide
         Glide.with(context)
                 .load(drink.getImageUrl())
@@ -122,6 +127,7 @@ public class NewDrinkAdapter extends RecyclerView.Adapter<NewDrinkAdapter.NewDri
         TextView drinkOriginalPrice;
         TextView drinkDiscountedPrice;
         TextView drinkDiscountedPercent;
+        TextView soldOutText;
 
         public NewDrinkViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -133,6 +139,7 @@ public class NewDrinkAdapter extends RecyclerView.Adapter<NewDrinkAdapter.NewDri
 
             drinkDiscountedPrice = itemView.findViewById(R.id.newDrinkDiscountedPrice);
             drinkDiscountedPercent = itemView.findViewById(R.id.newDrinkDiscountPercent);
+            soldOutText = itemView.findViewById(R.id.soldOutText);
         }
     }
 }

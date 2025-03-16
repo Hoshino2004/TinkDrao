@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Drink> drinkList;
     private List<Drink> newDrinkList;
     private TextView tvViewAll;
-
+    static String phoneNumber;
     FirebaseAuth mAuth;
     FirebaseUser mUser;
     @Override
@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        phoneNumber = getIntent().getStringExtra("phoneNo");
         databaseReference = FirebaseDatabase.getInstance().getReference("TinkDrao");
         drinkRef = databaseReference.child("Drink");
 
@@ -209,20 +210,47 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.mnUser) {
-            if (mUser == null) {
-                Intent intent = new Intent(this, Login_Activity.class);
-                startActivity(intent);
-                finish();
-            } else {
+//            if (mUser == null) {
+//                Intent intent = new Intent(this, Login_Activity.class);
+//                startActivity(intent);
+//                finish();
+//            } else {
+//                if (!mUser.isEmailVerified()) {
+//                    mAuth.signOut(); // Đăng xuất người dùng nếu họ chưa xác thực
+//                    startActivity(new Intent(this, Login_Activity.class));
+//                    finish();
+//                } else if (phoneNumber!=null) {
+//                    Intent intent = new Intent(MainActivity.this, User_Activity.class);
+//                    intent.putExtra("phoneNo",phoneNumber);
+//                    startActivity(intent);
+//                    finish();
+//                } else {
+//                    Intent intent = new Intent(MainActivity.this, User_Activity.class);
+//                    startActivity(intent);
+//                    finish();
+//                }
+//            }
+            if(mUser!=null)
+            {
                 if (!mUser.isEmailVerified()) {
                     mAuth.signOut(); // Đăng xuất người dùng nếu họ chưa xác thực
                     startActivity(new Intent(this, Login_Activity.class));
                     finish();
-                } else {
+                }
+                else {
                     Intent intent = new Intent(MainActivity.this, User_Activity.class);
                     startActivity(intent);
                     finish();
                 }
+            } else if (mUser==null && phoneNumber!=null) {
+                Intent intent = new Intent(MainActivity.this, User_Activity.class);
+                intent.putExtra("phoneNo",phoneNumber);
+                startActivity(intent);
+                finish();
+            }
+            else {
+                startActivity(new Intent(MainActivity.this,Login_Activity.class));
+                finish();
             }
         }
         return super.onOptionsItemSelected(item);

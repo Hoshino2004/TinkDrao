@@ -8,78 +8,100 @@
     card_view:cardElevation="4dp"
     android:layout_margin="8dp">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="#FFFFFF">
+        android:layout_height="match_parent">
 
-        <!-- Ảnh nước -->
-        <ImageView
-            android:id="@+id/drinkImage"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:scaleType="fitXY"
-            android:contentDescription="Drink Image"/>
-
-        <!-- Tên nước -->
-        <TextView
-            android:id="@+id/drinkName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Drink Name"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#2C3E50"
-            android:paddingHorizontal="8dp"
-            android:paddingTop="8dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:gravity="center"/>
-
-        <!-- Layout cho giá gốc và phần trăm giảm giá -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:paddingHorizontal="8dp"
-            android:paddingTop="4dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="#FFFFFF">
 
-            <!-- Giá gốc (bị gạch ngang) -->
-            <TextView
-                android:id="@+id/drinkOriginalPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$4.00"
-                android:textSize="12sp"
-                android:textColor="#7F8C8D"
-                android:paddingEnd="8dp"
-                android:visibility="visible"/>
+            <!-- Ảnh nước -->
+            <ImageView
+                android:id="@+id/drinkImage"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:scaleType="fitXY"
+                android:contentDescription="Drink Image"/>
 
-            <!-- Phần trăm giảm giá -->
+            <!-- Tên nước -->
             <TextView
-                android:id="@+id/drinkDiscountPercent"
-                android:layout_width="wrap_content"
+                android:id="@+id/drinkName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="-25%"
-                android:textSize="12sp"
-                android:textColor="#27AE60"/>
+                android:text="Drink Name"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#2C3E50"
+                android:paddingHorizontal="8dp"
+                android:paddingTop="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:gravity="center"/>
+
+            <!-- Layout cho giá gốc và phần trăm giảm giá -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:paddingTop="4dp">
+
+                <!-- Giá gốc (bị gạch ngang) -->
+                <TextView
+                    android:id="@+id/drinkOriginalPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$4.00"
+                    android:textSize="12sp"
+                    android:textColor="#7F8C8D"
+                    android:paddingEnd="8dp"
+                    android:visibility="visible"/>
+
+                <!-- Phần trăm giảm giá -->
+                <TextView
+                    android:id="@+id/drinkDiscountPercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-25%"
+                    android:textSize="12sp"
+                    android:textColor="#27AE60"/>
+            </LinearLayout>
+
+            <!-- Giá đã giảm -->
+            <TextView
+                android:id="@+id/drinkDiscountedPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="$3.50"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#E74C3C"
+                android:gravity="center"
+                android:paddingHorizontal="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"/>
         </LinearLayout>
 
-        <!-- Giá đã giảm -->
+        <!-- Chữ SOLD OUT -->
         <TextView
-            android:id="@+id/drinkDiscountedPrice"
+            android:id="@+id/soldOutText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="$3.50"
-            android:textSize="16sp"
+            android:text="SOLD OUT"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#E74C3C"
+            android:textColor="#FFFFFF"
             android:gravity="center"
-            android:paddingHorizontal="8dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="8dp"/>
+            android:background="#CC000000"
+            android:padding="8dp"
+            android:rotation="-20"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
 
-    </LinearLayout>
+    </FrameLayout>
+
 </androidx.cardview.widget.CardView>

@@ -1,5 +1,6 @@
 package com.example.tinkdrao;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tinkdrao.adapter.OrderAdapter;
 import com.example.tinkdrao.model.Cart;
+import com.example.tinkdrao.model.Drink;
 import com.example.tinkdrao.model.Order;
 import com.example.tinkdrao.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,18 +51,28 @@ public class Order_Activity extends AppCompatActivity {
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
     String formattedTime = now.format(formatter);
+    static String phoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
+        phoneNumber = getIntent().getStringExtra("phoneNo");
+
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         drinkRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Drink");
-        userRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Users/"+mUser.getUid());
-        orderRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Order/"+mUser.getUid());
-        cartRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Order/"+mUser.getUid());
-        removeRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Cart/"+mUser.getUid());
+        if(mUser!=null)
+        {
+            userRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Users/"+mUser.getUid());
+            orderRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Order/"+mUser.getUid());
+            cartRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Order/"+mUser.getUid());
+            removeRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Cart/"+mUser.getUid());
+        } else if (phoneNumber!=null) {
+            orderRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Order/"+phoneNumber);
+            cartRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Order/"+phoneNumber);
+            removeRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Cart/"+phoneNumber);
+        }
 
         decimalFormat = new DecimalFormat("#,###");
 
@@ -97,8 +109,105 @@ public class Order_Activity extends AppCompatActivity {
         checkOrder();
 
         // Up dữ liệu lên Firebase
-        upOrder();
+        if(mUser!=null)
+        {
+            upOrder();
+        } else if (phoneNumber!=null) {
+            updateOrder();
+        }
     }
+
+    private void updateOrder() {
+        edtPhoneNo.setEnabled(false);
+        edtPhoneNo.setText(phoneNumber);
+        checkOrder();
+        // Sự kiện nhấn nút "Đặt hàng"
+        btnOrder.setOnClickListener(v -> {
+            {
+                if(!edtAddress.getText().toString().equals("") && !edtName.getText().toString().equals(""))
+                {
+                    // Hiển thị ProgressBar và ẩn giao diện khác
+                    progressBar.setVisibility(View.VISIBLE);
+                    findViewById(R.id.main).setAlpha(0.3f); // Làm mờ giao diện chính
+                    btnOrder.setEnabled(false);
+
+                    total = 0;
+                    for (Cart cart : selectedItems) {
+                        double discountedPrice = cart.getPrice() * (100 - cart.getDiscount()) / 100;
+                        total += discountedPrice * cart.getQuantity();
+                    }
+
+                    // Thêm logic đặt hàng tại đây (ví dụ: gửi lên Firebase)
+                    orderRef.child("HoaDon" + id).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Order order = new Order(edtName.getText().toString(), phoneNumber, edtAddress.getText().toString(), formattedTime, "Chờ vận chuyển", total, "HoaDon" + id, "Chưa thanh toán");
+                            orderRef.child("HoaDon" + id).setValue(order).addOnSuccessListener(aVoid -> {
+                                        // Sau khi lưu thành công, ẩn ProgressBar và hiển thị thông báo
+                                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                            progressBar.setVisibility(View.GONE);
+                                            tvSuccessMessage.setVisibility(View.VISIBLE);
+                                            findViewById(R.id.main).setAlpha(1.0f); // Khôi phục giao diện
+                                            // Quay lại sau 2 giây
+                                            new Handler(Looper.getMainLooper()).postDelayed(() -> finish(), 1000);
+                                        }, 2000); // Delay 2 giây để mô phỏng loading
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        progressBar.setVisibility(View.GONE);
+                                        findViewById(R.id.main).setAlpha(1.0f);
+                                        btnOrder.setEnabled(true);
+                                        Toast.makeText(Order_Activity.this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
+                            for(Cart cart : selectedItems)
+                            {
+                                cartRef.child("HoaDon"+id).child("Data").child(String.valueOf(cart.getId())).setValue(cart);
+                                drinkRef.child(String.valueOf(cart.getId())).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if(snapshot.exists())
+                                        {
+                                            Cart itemCart = snapshot.getValue(Cart.class);
+                                            drinkRef.child(String.valueOf(itemCart.getId())).child("quantity").setValue(itemCart.getQuantity()-cart.getQuantity());
+                                            drinkRef.child(String.valueOf(itemCart.getId())).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if(snapshot.exists())
+                                                    {
+                                                        Drink drink = snapshot.getValue(Drink.class);
+                                                        drinkRef.child(String.valueOf(itemCart.getId())).child("purchaseCount").setValue(drink.getPurchaseCount()+ cart.getQuantity());
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                                removeRef.child(String.valueOf(cart.getId())).removeValue();
+                            }
+                            selectedItems.clear();
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
+                }
+                else
+                {
+                    Toast.makeText(Order_Activity.this, "Vui lòng điền đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
     private void upOrder() {
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -149,7 +258,7 @@ public class Order_Activity extends AppCompatActivity {
                                                         tvSuccessMessage.setVisibility(View.VISIBLE);
                                                         findViewById(R.id.main).setAlpha(1.0f); // Khôi phục giao diện
                                                         // Quay lại sau 2 giây
-                                                        new Handler(Looper.getMainLooper()).postDelayed(() -> finish(), 2000);
+                                                        new Handler(Looper.getMainLooper()).postDelayed(() -> finish(), 1000);
                                                     }, 2000); // Delay 2 giây để mô phỏng loading
                                                 })
                                                 .addOnFailureListener(e -> {
@@ -168,6 +277,21 @@ public class Order_Activity extends AppCompatActivity {
                                                     {
                                                         Cart itemCart = snapshot.getValue(Cart.class);
                                                         drinkRef.child(String.valueOf(itemCart.getId())).child("quantity").setValue(itemCart.getQuantity()-cart.getQuantity());
+                                                        drinkRef.child(String.valueOf(itemCart.getId())).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                if(snapshot.exists())
+                                                                {
+                                                                    Drink drink = snapshot.getValue(Drink.class);
+                                                                    drinkRef.child(String.valueOf(itemCart.getId())).child("purchaseCount").setValue(drink.getPurchaseCount()+ cart.getQuantity());
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                            }
+                                                        });
                                                     }
                                                 }
 
@@ -232,7 +356,13 @@ public class Order_Activity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        if(phoneNumber!=null)
+        {
+            Intent intent = new Intent(Order_Activity.this, Cart_Activity.class);
+            intent.putExtra("phoneNo",phoneNumber);
+            startActivity(intent);
+            finish();
+        }
         return true;
     }
 }
