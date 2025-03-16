@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="@color/white"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginBottom="16dp">  <!-- Đảm bảo khoảng cách giữa các item -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header: Ngày tạo + Icon trạng thái -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/tv_created_at"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ngày tạo: 12/03/2024"
+                android:textSize="20dp"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+            <ImageView
+                android:id="@+id/img_status_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                />  <!-- Icon trạng thái -->
+        </LinearLayout>
+
+        <!-- Dòng kẻ phân cách -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DDDDDD"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_name_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tên người dùng: "
+        android:textSize="20dp"
+        android:textColor="#212121"
+        android:layout_marginBottom="8dp"
+            android:visibility="gone"/>
+
+        <!-- Nội dung đơn hàng -->
+
+
+        <TextView
+            android:id="@+id/tv_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Số lượng sản phẩm: 5"
+            android:textSize="14sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trạng thái: Đã xác nhận"
+            android:textSize="14sp"
+            android:textColor="#02CA1B"
+            android:layout_marginBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tv_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tổng tiền: 1.500.000đ"
+            android:textSize="20dp"
+            android:textColor="#E53935"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

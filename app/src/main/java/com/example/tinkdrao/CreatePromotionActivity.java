@@ -135,8 +135,8 @@ public class CreatePromotionActivity extends AppCompatActivity {
                 Toast.makeText(this, "Giảm giá chỉ được tối đa 2 chữ số thập phân", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (discount < 0 || discount > 100) {
-                Toast.makeText(this, "Giảm giá phải từ 0 đến 100", Toast.LENGTH_SHORT).show();
+            if (discount < 0 || discount > 80) {
+                Toast.makeText(this, "Giảm giá phải từ 0 đến 80", Toast.LENGTH_SHORT).show();
                 return;
             }
         } catch (NumberFormatException e) {
