@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="10dp"
+    android:paddingLeft="5dp"
+    tools:context=".MainActivity">
+
+    <!-- Item Trang Cá Nhân -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardOrder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:elevation="6dp"
+        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="#CFF88C"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/cardAnalytics"
+        app:layout_constraintWidth_percent="0.47"> <!-- Điều chỉnh tỷ lệ chiều rộng -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:contentDescription="Profile Icon"
+                android:src="@drawable/ic_order" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Xem đơn hàng"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Item Danh Mục Sách -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardAnalytics"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:elevation="6dp"
+        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="#9FF8DF"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cardOrder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.47"> <!-- Điều chỉnh tỷ lệ chiều rộng -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:src="@drawable/ic_analytics"
+                android:contentDescription="Books Icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Thống kê doanh thu"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

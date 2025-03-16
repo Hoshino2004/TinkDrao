@@ -1,6 +1,9 @@
 package com.example.tinkdrao.model;
 
-public class Order {
+import java.io.Serializable;
+import java.util.List;
+
+public class Order implements Serializable {
     private String nameUser;
     private String phoneNo;
     private String address;
@@ -9,6 +12,7 @@ public class Order {
     private Long total;
     private String id;
     private String statusPay;
+    private List<Drink> products;
     public Order() {
     }
 
@@ -21,6 +25,15 @@ public class Order {
         this.total = total;
         this.id = id;
         this.statusPay = statusPay;
+    }
+
+    public Order(String createdAt, String address, Long total, String nameUser, String phoneNo, List<Drink> products) {
+        this.createdAt = createdAt;
+        this.address = address;
+        this.total = total;
+        this.nameUser = nameUser;
+        this.phoneNo = phoneNo;
+        this.products = products;
     }
 
     public String getNameUser() {
@@ -86,4 +99,6 @@ public class Order {
     public void setStatusPay(String statusPay) {
         this.statusPay = statusPay;
     }
+
+    public List<Drink> getProducts() { return products; }
 }

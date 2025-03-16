@@ -370,6 +370,12 @@ public class User_Activity extends AppCompatActivity {
 //                            }
 //                        });
                         btnChangePassword.setText("Quản lý \n Đơn hàng");
+                        btnChangePassword.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                startActivity(new Intent(User_Activity.this, OrderManagementActivity.class));
+                            }
+                        });
 //                        btnChangePassword.setOnClickListener(new View.OnClickListener() {
 //                            @Override
 //                            public void onClick(View view) {

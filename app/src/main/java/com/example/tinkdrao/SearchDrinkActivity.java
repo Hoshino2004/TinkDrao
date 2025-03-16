@@ -146,23 +146,6 @@ public class SearchDrinkActivity extends AppCompatActivity {
         builder.setTitle(title);
 
         builder.setMultiChoiceItems(itemsArray, checkedItems, (dialog, which, isChecked) -> {
-            if (itemsArray[which].equals("--Tất cả--")) {
-                if (isChecked) {
-                    // Nếu chọn "--Tất cả--", bỏ chọn tất cả các mục khác
-                    for (int i = 0; i < checkedItems.length; i++) {
-                        if (!itemsArray[i].equals("--Tất cả--")) {
-                            checkedItems[i] = false;
-                            ((AlertDialog) dialog).getListView().setItemChecked(i, false);  // Bỏ check các mục khác
-                        }
-                    }
-                }
-            } else {
-                // Nếu chọn mục khác và "--Tất cả--" đang được chọn, bỏ chọn "--Tất cả--"
-                if (checkedItems[0]) {  // Giả sử "--Tất cả--" là mục đầu tiên trong danh sách
-                    checkedItems[0] = false;
-                    ((AlertDialog) dialog).getListView().setItemChecked(0, false);  // Bỏ chọn "--Tất cả--"
-                }
-            }
             // Cập nhật trạng thái của mục vừa thay đổi
             checkedItems[which] = isChecked;
         });

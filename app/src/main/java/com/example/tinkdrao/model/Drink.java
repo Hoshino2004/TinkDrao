@@ -34,6 +34,14 @@ public class Drink implements Serializable {
         this.createdAt = createdAt;
     }
 
+    public Drink(String name, int price, int quantity, String unit, String imageUrl) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.unit = unit;
+        this.imageUrl = imageUrl;
+    }
+
     public long getId() {
         return id;
     }

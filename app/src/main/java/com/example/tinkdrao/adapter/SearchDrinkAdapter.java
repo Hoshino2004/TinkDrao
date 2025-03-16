@@ -1,6 +1,7 @@
 package com.example.tinkdrao.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.tinkdrao.DrinkDetailActivity;
 import com.example.tinkdrao.R;
 import com.example.tinkdrao.model.Drink;
 
@@ -65,6 +67,13 @@ public class SearchDrinkAdapter extends RecyclerView.Adapter<SearchDrinkAdapter.
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.loading)
                 .into(holder.drinkImage);
+
+        // Thêm sự kiện click để chuyển sang DrinkDetailActivity
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DrinkDetailActivity.class);
+            intent.putExtra("id", drink.getId()); // Truyền ID của sản phẩm
+            context.startActivity(intent);
+        });
     }
 
     @Override

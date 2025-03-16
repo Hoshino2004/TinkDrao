@@ -15,6 +15,16 @@
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".OrderAnalyticDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ThongKeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
+        <activity
+            android:name=".OrderManagementActivity"
+            android:exported="false" />
+        <activity
             android:name=".Order_Activity"
             android:exported="false" />
         <activity
