@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".History_Order_Activity"
+    android:layout_margin="10dp"
+    android:orientation="vertical"
+    android:background="#F5F5F5"> <!-- Nền nhẹ để phân biệt -->
+
+    <!-- RecyclerView kéo ngang -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recStatusOrder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="50dp"
+        android:padding="8dp"
+        android:scrollbars="horizontal"
+        android:overScrollMode="never"
+        android:background="@android:color/white"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintHorizontal_bias="0.0" />
+
+    <!-- ListView cho lịch sử đơn hàng -->
+    <ListView
+        android:id="@+id/lvCartHistory"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="32dp"
+        android:padding="16dp"
+        android:clipToPadding="false" />
+</LinearLayout>

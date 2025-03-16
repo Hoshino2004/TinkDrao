@@ -312,10 +312,7 @@ public class User_Activity extends AppCompatActivity {
                         btnHDTN.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-//                                startActivity(new Intent(User_Activity.this, HDTN_Activity.class));
-//                                Intent intent = new Intent(User_Activity.this, HDTN_Activity.class);
-//                                intent.putExtra("role", roleUserDetail);
-//                                startActivity(intent);
+                                startActivity(new Intent(User_Activity.this, History_Order_Activity.class));
                             }
                         });
                     }
@@ -326,6 +323,7 @@ public class User_Activity extends AppCompatActivity {
                             public void onClick(View view) {
                                 Intent intent = new Intent(User_Activity.this, DrinkListActivity.class );
                                 startActivity(intent);
+                                finish();
                             }
                         });
 //                        btnChung.setOnClickListener(new View.OnClickListener() {

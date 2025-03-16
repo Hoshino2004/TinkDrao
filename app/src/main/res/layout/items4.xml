@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linear_item1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="20dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <!-- Gradient Background -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/gradient_background">
+
+        <!-- Thời gian đặt hàng -->
+        <TextView
+            android:id="@+id/hcDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thời gian đặt hàng"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:background="@drawable/header_background" />
+
+        <!-- Đường phân cách -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/divider_gradient" />
+
+        <!-- Thông tin chi tiết -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="12dp">
+
+            <!-- Tên -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tên: "
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF5722"
+                    android:gravity="center_vertical" />
+                <TextView
+                    android:id="@+id/hcName"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Tên"
+                    android:textSize="18sp"
+                    android:textColor="#212121"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+
+            <!-- Số điện thoại -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SĐT: "
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF5722"
+                    android:gravity="center_vertical" />
+                <TextView
+                    android:id="@+id/hcPhoneNumber"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Số Điện Thoại"
+                    android:textSize="18sp"
+                    android:textColor="#212121"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+
+            <!-- Địa chỉ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Địa chỉ: "
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF5722"
+                    android:gravity="center_vertical" />
+                <TextView
+                    android:id="@+id/hcAddress"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Địa chỉ"
+                    android:textSize="18sp"
+                    android:textColor="#212121"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+
+            <!-- Tình trạng -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tình trạng: "
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF5722"
+                    android:gravity="center_vertical" />
+                <TextView
+                    android:id="@+id/hcStatus"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Tình trạng đơn hàng"
+                    android:textSize="18sp"
+                    android:textColor="#212121"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+
+            <!-- Tình trạng thanh toán -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tình trạng TT: "
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF5722"
+                    android:gravity="center_vertical" />
+                <TextView
+                    android:id="@+id/hcStatusPay"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Tình trạng thanh toán"
+                    android:textSize="18sp"
+                    android:textColor="#212121"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+
+            <!-- Tổng tiền -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng tiền: "
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF5722"
+                    android:gravity="center_vertical" />
+                <TextView
+                    android:id="@+id/hcTotal"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng tiền"
+                    android:textSize="18sp"
+                    android:textColor="#212121"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

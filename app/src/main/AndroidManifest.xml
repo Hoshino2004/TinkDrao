@@ -25,6 +25,15 @@
             android:name=".OrderManagementActivity"
             android:exported="false" />
         <activity
+            android:name=".Detail_History_Order_Activity"
+            android:exported="false" />
+        <activity
+            android:name=".History_Order_Activity"
+            android:exported="false" />
+        <activity
+            android:name=".OrderDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".Order_Activity"
             android:exported="false" />
         <activity
