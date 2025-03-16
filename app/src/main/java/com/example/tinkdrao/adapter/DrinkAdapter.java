@@ -74,6 +74,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.DrinkViewHol
             intent.putExtra("id", drink.getId()); // Truyền ID của sản phẩm
             context.startActivity(intent);
         });
+        holder.drinkDiscountedPercent.setText("-"+drink.getDiscount()+"%");
     }
 
     @Override

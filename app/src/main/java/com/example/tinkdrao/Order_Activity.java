@@ -43,7 +43,7 @@ public class Order_Activity extends AppCompatActivity {
     private DecimalFormat decimalFormat;
     private EditText edtName, edtPhoneNo, edtAddress;
     FirebaseUser mUser;
-    DatabaseReference userRef, orderRef, cartRef, removeRef;
+    DatabaseReference userRef, orderRef, cartRef, removeRef, drinkRef;
     private long id = 0;
     private long total = 0;
     LocalDateTime now = LocalDateTime.now();
@@ -56,6 +56,7 @@ public class Order_Activity extends AppCompatActivity {
         setContentView(R.layout.activity_order);
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
+        drinkRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Drink");
         userRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Users/"+mUser.getUid());
         orderRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Order/"+mUser.getUid());
         cartRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Order/"+mUser.getUid());
@@ -140,7 +141,7 @@ public class Order_Activity extends AppCompatActivity {
                                 orderRef.child("HoaDon" + id).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        Order order = new Order(user.getUsername(), user.getPhoneno(), edtAddress.getText().toString(), formattedTime, "Chưa vận chuyển", total, "HoaDon" + id, "Chưa thanh toán");
+                                        Order order = new Order(user.getUsername(), user.getPhoneno(), edtAddress.getText().toString(), formattedTime, "Chờ vận chuyển", total, "HoaDon" + id, "Chưa thanh toán");
                                         orderRef.child("HoaDon" + id).setValue(order).addOnSuccessListener(aVoid -> {
                                                     // Sau khi lưu thành công, ẩn ProgressBar và hiển thị thông báo
                                                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
@@ -160,6 +161,21 @@ public class Order_Activity extends AppCompatActivity {
                                         for(Cart cart : selectedItems)
                                         {
                                             cartRef.child("HoaDon"+id).child("Data").child(String.valueOf(cart.getId())).setValue(cart);
+                                            drinkRef.child(String.valueOf(cart.getId())).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if(snapshot.exists())
+                                                    {
+                                                        Cart itemCart = snapshot.getValue(Cart.class);
+                                                        drinkRef.child(String.valueOf(itemCart.getId())).child("quantity").setValue(itemCart.getQuantity()-cart.getQuantity());
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
                                             removeRef.child(String.valueOf(cart.getId())).removeValue();
                                         }
                                         selectedItems.clear();
