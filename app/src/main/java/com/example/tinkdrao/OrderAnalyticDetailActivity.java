@@ -48,7 +48,7 @@ public class OrderAnalyticDetailActivity extends AppCompatActivity {
             tvTotal.setText(String.format("%,d VNĐ", order.getTotal()));
             tvNameUser.setText(order.getNameUser());
             tvPhoneNo.setText(order.getPhoneNo());
-            ProductAdapter adapter = new ProductAdapter(order.getProducts());
+            ProductAdapter adapter = new ProductAdapter(order.getItems());
             rvFullProducts.setAdapter(adapter);
         }
     }

@@ -69,7 +69,7 @@ public class OrderAdapter2 extends RecyclerView.Adapter<OrderAdapter2.OrderViewH
             tvPhoneNo.setText(order.getPhoneNo());   // Hiển thị phoneNo
 
             // Giới hạn số lượng sản phẩm hiển thị
-            List<Drink> products = order.getProducts();
+            List<Drink> products = order.getItems();
             List<Drink> displayProducts = products.size() > MAX_PRODUCTS_DISPLAY
                     ? products.subList(0, MAX_PRODUCTS_DISPLAY)
                     : products;

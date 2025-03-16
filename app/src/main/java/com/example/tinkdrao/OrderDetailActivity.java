@@ -60,6 +60,13 @@ public class OrderDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_detail);
 
+        getSupportActionBar().setTitle("Chi tiết đơn hàng");
+
+        // Hiển thị nút Back trên ActionBar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         mUser = FirebaseAuth.getInstance().getCurrentUser(); // Thêm dòng này
         userRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Users/" + mUser.getUid()); // Thêm dòng này
         orderRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Order/" + mUser.getUid()); // Thêm dòng này
@@ -292,8 +299,9 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_back) {
+    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Khi bấm nút Back, quay về Activity trước đó
             finish();
             return true;
         }

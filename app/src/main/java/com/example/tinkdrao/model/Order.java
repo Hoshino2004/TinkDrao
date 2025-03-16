@@ -28,6 +28,15 @@ public class Order implements Serializable {
 
     }
 
+    public Order(String createdAt, String address, Long total, String nameUser, String phoneNo, List<Drink> items) {
+        this.createdAt = createdAt;
+        this.address = address;
+        this.phoneNo = phoneNo;
+        this.total = total;
+        this.items = items;
+        this.nameUser = nameUser;
+    }
+
     public String getNameUser() {
         return nameUser;
     }
@@ -90,5 +99,13 @@ public class Order implements Serializable {
 
     public void setStatusPay(String statusPay) {
         this.statusPay = statusPay;
+    }
+
+    public List<Drink> getItems() {
+        return items;
+    }
+
+    public void setItems(List<Drink> items) {
+        this.items = items;
     }
 }

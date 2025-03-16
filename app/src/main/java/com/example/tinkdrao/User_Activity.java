@@ -53,6 +53,7 @@ public class User_Activity extends AppCompatActivity {
     StorageReference reference;
     Uri imageUri;
     ImageView imgAvatar;
+    static String phoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,8 @@ public class User_Activity extends AppCompatActivity {
         setContentView(R.layout.activity_user);
 
         getSupportActionBar().setTitle("Trang cá nhân");
+
+        phoneNumber = getIntent().getStringExtra("phoneNo");
 
         //Truy vấn dữ liệu
         nameUser = findViewById(R.id.nameUser);
@@ -77,92 +80,94 @@ public class User_Activity extends AppCompatActivity {
 
         userRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Users");
 
-        userRef.child(mUser.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    User userDetail = snapshot.getValue(User.class);
-                    String nameUserDetail = userDetail.getUsername();
-                    String emailUserDetail = userDetail.getEmail();
-                    String phonenoUserDetail = userDetail.getPhoneno();
-                    if (!User_Activity.this.isDestroyed()) {
-                        // Thêm timestamp để tránh cache ảnh cũ
-                        String avatarUrl = userDetail.getAvatar() + "?t=" + System.currentTimeMillis();
-                        Glide.with(User_Activity.this)
-                                .load(avatarUrl)
-                                .diskCacheStrategy(DiskCacheStrategy.NONE) // Không lưu cache
-                                .skipMemoryCache(true) // Bỏ qua cache RAM
-                                .into(avatarUser);
-                    }
-                    String roleUserDetail = userDetail.getRole();
+        if(mUser!=null)
+        {
+            userRef.child(mUser.getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        User userDetail = snapshot.getValue(User.class);
+                        String nameUserDetail = userDetail.getUsername();
+                        String emailUserDetail = userDetail.getEmail();
+                        String phonenoUserDetail = userDetail.getPhoneno();
+                        if (!User_Activity.this.isDestroyed()) {
+                            // Thêm timestamp để tránh cache ảnh cũ
+                            String avatarUrl = userDetail.getAvatar() + "?t=" + System.currentTimeMillis();
+                            Glide.with(User_Activity.this)
+                                    .load(avatarUrl)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE) // Không lưu cache
+                                    .skipMemoryCache(true) // Bỏ qua cache RAM
+                                    .into(avatarUser);
+                        }
+                        String roleUserDetail = userDetail.getRole();
 
-                    nameUser.setText(nameUserDetail);
-                    emailUser.setText(emailUserDetail);
-                    phonenoUser.setText(phonenoUserDetail);
-                    if (roleUserDetail.equals("Customer")) {
-                        btnChung.setText("Chỉnh sửa");
-                        btnChung.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(User_Activity.this);
-                                View dialogView = getLayoutInflater().inflate(R.layout.update_profile, null);
-                                imgAvatar = dialogView.findViewById(R.id.imgAvatarUpdate);
-                                EditText edtNameUpdate = dialogView.findViewById(R.id.edtDisplayNameUpdate);
-                                EditText edtPhonenoUpdate = dialogView.findViewById(R.id.edtPhoneUpdate);
-                                EditText edtEmailUpdate = dialogView.findViewById(R.id.edtEmailUpdate);
+                        nameUser.setText(nameUserDetail);
+                        emailUser.setText(emailUserDetail);
+                        phonenoUser.setText(phonenoUserDetail);
+                        if (roleUserDetail.equals("Customer")) {
+                            btnChung.setText("Chỉnh sửa");
+                            btnChung.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(User_Activity.this);
+                                    View dialogView = getLayoutInflater().inflate(R.layout.update_profile, null);
+                                    imgAvatar = dialogView.findViewById(R.id.imgAvatarUpdate);
+                                    EditText edtNameUpdate = dialogView.findViewById(R.id.edtDisplayNameUpdate);
+                                    EditText edtPhonenoUpdate = dialogView.findViewById(R.id.edtPhoneUpdate);
+                                    EditText edtEmailUpdate = dialogView.findViewById(R.id.edtEmailUpdate);
 
-                                builder.setView(dialogView);
-                                AlertDialog dialog = builder.create();
+                                    builder.setView(dialogView);
+                                    AlertDialog dialog = builder.create();
 
 
-                                edtEmailUpdate.setText(mUser.getEmail());
-                                edtEmailUpdate.setEnabled(false);
-                                edtPhonenoUpdate.setText(phonenoUserDetail);
-                                edtPhonenoUpdate.setEnabled(false);
-                                edtNameUpdate.setText(nameUserDetail);
+                                    edtEmailUpdate.setText(mUser.getEmail());
+                                    edtEmailUpdate.setEnabled(false);
+                                    edtPhonenoUpdate.setText(phonenoUserDetail);
+                                    edtPhonenoUpdate.setEnabled(false);
+                                    edtNameUpdate.setText(nameUserDetail);
 
-                                String avatarUrl = userDetail.getAvatar() + "?t=" + System.currentTimeMillis();
-                                Glide.with(User_Activity.this)
-                                        .load(avatarUrl)
-                                        .diskCacheStrategy(DiskCacheStrategy.NONE) // Không lưu cache
-                                        .skipMemoryCache(true) // Bỏ qua cache RAM
-                                        .into(imgAvatar);
+                                    String avatarUrl = userDetail.getAvatar() + "?t=" + System.currentTimeMillis();
+                                    Glide.with(User_Activity.this)
+                                            .load(avatarUrl)
+                                            .diskCacheStrategy(DiskCacheStrategy.NONE) // Không lưu cache
+                                            .skipMemoryCache(true) // Bỏ qua cache RAM
+                                            .into(imgAvatar);
 
-                                imgAvatar.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Intent galleryIntent = new Intent();
-                                        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                                        galleryIntent.setType("image/*");
-                                        startActivityForResult(galleryIntent, 2);
-                                    }
-                                });
-                                dialogView.findViewById(R.id.btn_update_profile).setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if (imageUri != null) {
-                                            uploadToFirebase(imageUri);
-                                            mUser = FirebaseAuth.getInstance().getCurrentUser();
-                                            UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
-                                                    .setDisplayName(edtNameUpdate.getText().toString().trim()).build();
-                                            if (edtNameUpdate.getText().toString().trim().equals("")) {
-                                                Toast.makeText(User_Activity.this, "Không được để trống", Toast.LENGTH_SHORT).show();
-                                            }
-                                            else {
-                                                String usernameUpdate = edtNameUpdate.getText().toString();
-                                                Task<Uri> uriTask = reference.getDownloadUrl();
-                                                uriTask.addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                    @Override
-                                                    public void onSuccess(Uri uri) {
-                                                        userRef.child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                if (snapshot.exists()) {
-                                                                    String avatar = uri.toString();
-                                                                    userRef.child(mUser.getUid()).child("/avatar").setValue(avatar);
-                                                                    userRef.child(mUser.getUid()).child("/username").setValue(usernameUpdate);
-                                                                    DatabaseReference userDB = FirebaseDatabase.getInstance().getReference("TinkDrao/Username");
-                                                                    userDB.child(mUser.getUid()).setValue(usernameUpdate + " (" + mUser.getEmail() + ")");
+                                    imgAvatar.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent galleryIntent = new Intent();
+                                            galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                                            galleryIntent.setType("image/*");
+                                            startActivityForResult(galleryIntent, 2);
+                                        }
+                                    });
+                                    dialogView.findViewById(R.id.btn_update_profile).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            if (imageUri != null) {
+                                                uploadToFirebase(imageUri);
+                                                mUser = FirebaseAuth.getInstance().getCurrentUser();
+                                                UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
+                                                        .setDisplayName(edtNameUpdate.getText().toString().trim()).build();
+                                                if (edtNameUpdate.getText().toString().trim().equals("")) {
+                                                    Toast.makeText(User_Activity.this, "Không được để trống", Toast.LENGTH_SHORT).show();
+                                                }
+                                                else {
+                                                    String usernameUpdate = edtNameUpdate.getText().toString();
+                                                    Task<Uri> uriTask = reference.getDownloadUrl();
+                                                    uriTask.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                        @Override
+                                                        public void onSuccess(Uri uri) {
+                                                            userRef.child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                    if (snapshot.exists()) {
+                                                                        String avatar = uri.toString();
+                                                                        userRef.child(mUser.getUid()).child("/avatar").setValue(avatar);
+                                                                        userRef.child(mUser.getUid()).child("/username").setValue(usernameUpdate);
+                                                                        DatabaseReference userDB = FirebaseDatabase.getInstance().getReference("TinkDrao/Username");
+                                                                        userDB.child(mUser.getUid()).setValue(usernameUpdate + " (" + mUser.getEmail() + ")");
 
 //                                                                    DatabaseReference commentRef = FirebaseDatabase.getInstance().getReference("Comments");
 //                                                                    commentRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -185,116 +190,116 @@ public class User_Activity extends AppCompatActivity {
 //
 //                                                                        }
 //                                                                    });
-                                                                    Toast.makeText(User_Activity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                                                                    mUser.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                        Toast.makeText(User_Activity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                                                                        mUser.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                dialog.dismiss();
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+                                                }
+                                            } else {
+                                                mUser = FirebaseAuth.getInstance().getCurrentUser();
+                                                UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
+                                                        .setDisplayName(edtNameUpdate.getText().toString().trim()).build();
+                                                if (edtNameUpdate.getText().toString().trim().equals("")) {
+                                                    Toast.makeText(User_Activity.this, "Không được để trống", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    String usernameUpdate = edtNameUpdate.getText().toString();
+                                                    userRef.child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                            if (snapshot.exists()) {
+                                                                userRef.child(mUser.getUid()).child("/username").setValue(usernameUpdate);
+                                                                Toast.makeText(User_Activity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                                                                DatabaseReference userDB = FirebaseDatabase.getInstance().getReference("TinkDrao/Username");
+                                                                userDB.child(mUser.getUid()).setValue(usernameUpdate + " (" + mUser.getEmail() + ")");
+                                                                mUser.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        if (task.isSuccessful()) {
                                                                             dialog.dismiss();
                                                                         }
-                                                                    });
-                                                                }
+                                                                    }
+                                                                });
                                                             }
+                                                        }
 
-                                                            @Override
-                                                            public void onCancelled(@NonNull DatabaseError error) {
-
-                                                            }
-                                                        });
-                                                    }
-                                                });
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                        }
+                                                    });
+                                                }
                                             }
-                                        } else {
+                                        }
+                                    });
+                                    if (dialog.getWindow() != null) {
+                                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+                                    }
+                                    dialog.show();
+                                }
+                            });
+                            btnChangePassword.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(User_Activity.this);
+                                    View dialogView = getLayoutInflater().inflate(R.layout.update_password, null);
+                                    EditText upCrtPass = dialogView.findViewById(R.id.upCrtPass);
+                                    EditText upNewPass = dialogView.findViewById(R.id.upNewPass);
+                                    EditText upRePass = dialogView.findViewById(R.id.upRePass);
+                                    builder.setView(dialogView);
+                                    AlertDialog dialog = builder.create();
+                                    dialogView.findViewById(R.id.btnUpdateUP).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
                                             mUser = FirebaseAuth.getInstance().getCurrentUser();
-                                            UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
-                                                    .setDisplayName(edtNameUpdate.getText().toString().trim()).build();
-                                            if (edtNameUpdate.getText().toString().trim().equals("")) {
-                                                Toast.makeText(User_Activity.this, "Không được để trống", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                String usernameUpdate = edtNameUpdate.getText().toString();
-                                                userRef.child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                        if (snapshot.exists()) {
-                                                            userRef.child(mUser.getUid()).child("/username").setValue(usernameUpdate);
-                                                            Toast.makeText(User_Activity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                                                            DatabaseReference userDB = FirebaseDatabase.getInstance().getReference("TinkDrao/Username");
-                                                            userDB.child(mUser.getUid()).setValue(usernameUpdate + " (" + mUser.getEmail() + ")");
-                                                            mUser.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            String oldPass, newPass, rePass;
+                                            oldPass = upCrtPass.getText().toString();
+                                            newPass = upNewPass.getText().toString();
+                                            rePass = upRePass.getText().toString();
+                                            userRef.child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    User user = snapshot.getValue(User.class);
+                                                    if (user.getPassword().equals(oldPass)) {
+                                                        if (newPass.length() < 6) {
+                                                            Toast.makeText(User_Activity.this, "Mật khẩu không được dưới 6 ký tự", Toast.LENGTH_SHORT).show();
+                                                            return;
+                                                        }
+                                                        if (!newPass.equals(rePass)) {
+                                                            Toast.makeText(User_Activity.this, "Mật khẩu mới và Xác nhận mật khẩu không trùng", Toast.LENGTH_SHORT).show();
+                                                            return;
+                                                        } else {
+                                                            mUser.updatePassword(newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
                                                                     if (task.isSuccessful()) {
+                                                                        Toast.makeText(User_Activity.this, "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
+                                                                        userRef.child(mUser.getUid()).child("/password").setValue(newPass);
                                                                         dialog.dismiss();
+                                                                    } else {
+                                                                        upCrtPass.setText("");
+                                                                        upNewPass.setText("");
+                                                                        upRePass.setText("");
+                                                                        Toast.makeText(User_Activity.this, "Đổi mật khẩu thất bại", Toast.LENGTH_SHORT).show();
                                                                     }
                                                                 }
                                                             });
                                                         }
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError error) {
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    }
-                                });
-                                if (dialog.getWindow() != null) {
-                                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-                                }
-                                dialog.show();
-                            }
-                        });
-                        btnChangePassword.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(User_Activity.this);
-                                View dialogView = getLayoutInflater().inflate(R.layout.update_password, null);
-                                EditText upCrtPass = dialogView.findViewById(R.id.upCrtPass);
-                                EditText upNewPass = dialogView.findViewById(R.id.upNewPass);
-                                EditText upRePass = dialogView.findViewById(R.id.upRePass);
-                                builder.setView(dialogView);
-                                AlertDialog dialog = builder.create();
-                                dialogView.findViewById(R.id.btnUpdateUP).setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        mUser = FirebaseAuth.getInstance().getCurrentUser();
-                                        String oldPass, newPass, rePass;
-                                        oldPass = upCrtPass.getText().toString();
-                                        newPass = upNewPass.getText().toString();
-                                        rePass = upRePass.getText().toString();
-                                        userRef.child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                User user = snapshot.getValue(User.class);
-                                                if (user.getPassword().equals(oldPass)) {
-                                                    if (newPass.length() < 6) {
-                                                        Toast.makeText(User_Activity.this, "Mật khẩu không được dưới 6 ký tự", Toast.LENGTH_SHORT).show();
-                                                        return;
-                                                    }
-                                                    if (!newPass.equals(rePass)) {
-                                                        Toast.makeText(User_Activity.this, "Mật khẩu mới và Xác nhận mật khẩu không trùng", Toast.LENGTH_SHORT).show();
-                                                        return;
                                                     } else {
-                                                        mUser.updatePassword(newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                            @Override
-                                                            public void onComplete(@NonNull Task<Void> task) {
-                                                                if (task.isSuccessful()) {
-                                                                    Toast.makeText(User_Activity.this, "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
-                                                                    userRef.child(mUser.getUid()).child("/password").setValue(newPass);
-                                                                    dialog.dismiss();
-                                                                } else {
-                                                                    upCrtPass.setText("");
-                                                                    upNewPass.setText("");
-                                                                    upRePass.setText("");
-                                                                    Toast.makeText(User_Activity.this, "Đổi mật khẩu thất bại", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            }
-                                                        });
+                                                        Toast.makeText(User_Activity.this, "Mật khẩu cũ không đúng", Toast.LENGTH_SHORT).show();
                                                     }
-                                                } else {
-                                                    Toast.makeText(User_Activity.this, "Mật khẩu cũ không đúng", Toast.LENGTH_SHORT).show();
                                                 }
-                                            }
 
                                                 @Override
                                                 public void onCancelled(@NonNull DatabaseError error) {
@@ -312,7 +317,7 @@ public class User_Activity extends AppCompatActivity {
                             btnHDTN.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    startActivity(new Intent(User_Activity.this, History_Order_Activity.class));
+                                    startActivity(new Intent(User_Activity.this, OrderListActivity.class));
                                 }
                             });
                         }
@@ -325,38 +330,6 @@ public class User_Activity extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError error) {
-                                            }
-                                        });
-                                    }
-                                });
-                                if (dialog.getWindow() != null) {
-                                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-                                }
-                                dialog.show();
-                            }
-                        });
-                        btnHDTN.setText("Đơn hàng");
-                        btnHDTN.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-//                                startActivity(new Intent(User_Activity.this, HDTN_Activity.class));
-//                                Intent intent = new Intent(User_Activity.this, HDTN_Activity.class);
-//                                intent.putExtra("role", roleUserDetail);
-//                                startActivity(intent);
-                            }
-                        });
-                    }
-                    if (roleUserDetail.equals("Admin")) {
-                        btnChung.setText("Quản lý \n sản phẩm");
-                        btnChung.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(User_Activity.this, DrinkListActivity.class );
-                                startActivity(intent);
-                            }
-                        });
 //                        btnChung.setOnClickListener(new View.OnClickListener() {
 //                            @Override
 //                            public void onClick(View view) {
@@ -398,14 +371,20 @@ public class User_Activity extends AppCompatActivity {
 //                                dialog.show();
 //                            }
 //                        });
-                        btnChangePassword.setText("Quản lý \n Đơn hàng");
+                            btnChangePassword.setText("Quản lý \n Đơn hàng");
+                            btnChangePassword.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    startActivity(new Intent(User_Activity.this, OrderManagementActivity.class));
+                                }
+                            });
 //                        btnChangePassword.setOnClickListener(new View.OnClickListener() {
 //                            @Override
 //                            public void onClick(View view) {
 //                                startActivity(new Intent(User_Activity.this, ReportAdminActivity.class));
 //                            }
 //                        });
-                        btnHDTN.setText("Tư vấn");
+                            btnHDTN.setText("Tư vấn");
 //                        btnHDTN.setOnClickListener(new View.OnClickListener() {
 //                            @Override
 //                            public void onClick(View view) {
@@ -414,24 +393,57 @@ public class User_Activity extends AppCompatActivity {
 //                                startActivity(intent);
 //                            }
 //                        });
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
+        }
+        else {
+            phonenoUser.setText(phoneNumber);
+            btnChangePassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(User_Activity.this, "Bạn cần đăng nhập để thực hiện tính năng này!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            btnChung.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(User_Activity.this, "Bạn cần đăng nhập để thực hiện tính năng này!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            btnLogout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(User_Activity.this, "Bạn cần đăng nhập để thực hiện tính năng này!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            btnHDTN.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Nhảy qua đơn hàng
+                }
+            });
+        }
 
-
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(User_Activity.this, MainActivity.class));
-                finish();
-            }
-        });
+        if(mUser!=null)
+        {
+            btnLogout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FirebaseAuth.getInstance().signOut();
+                    startActivity(new Intent(User_Activity.this, MainActivity.class));
+                    finish();
+                }
+            });
+        }
+        else {
+            Toast.makeText(this, "Bạn cần phải đăng nhập để thực hiện tính năng này!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void uploadToFirebase(Uri uri) {
@@ -476,40 +488,26 @@ public class User_Activity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.mnHome) {
-            startActivity(new Intent(User_Activity.this, MainActivity.class));
+            Intent intent = new Intent(User_Activity.this, MainActivity.class);
+            intent.putExtra("phoneNo",phoneNumber);
+            startActivity(intent);
             finish();
         }
         if (item.getItemId() == R.id.mnFavorite) {
-            startActivity(new Intent(User_Activity.this, Favorite_Drink_Activity.class));
+            if(mUser!=null)
+            {
+                startActivity(new Intent(User_Activity.this, Favorite_Drink_Activity.class));
+            }
+            else {
+                Toast.makeText(this, "Bạn cần phải đăng nhập để thực hiện tính năng này!", Toast.LENGTH_SHORT).show();
+            }
         }
         if (item.getItemId() == R.id.mnCart) {
-            startActivity(new Intent(User_Activity.this, Cart_Activity.class));
+            Intent intent = new Intent(User_Activity.this, Cart_Activity.class);
+            intent.putExtra("phoneNo",phoneNumber);
+            startActivity(intent);
+            finish();
         }
-//        if (item.getItemId() == R.id.mnChat) {
-//            userRef = FirebaseDatabase.getInstance().getReference("Users");
-//            mUser = FirebaseAuth.getInstance().getCurrentUser();
-//            userRef.child(mUser.getUid()).addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                    if (snapshot.exists()) {
-//                        User userDetail = snapshot.getValue(User.class);
-//                        String roleUserDetail = userDetail.getRole();
-//                        if(roleUserDetail.equals("Customer"))
-//                        {
-//                            startActivity(new Intent(User_Activity.this, ChatActivity.class));
-//                        }
-//                        else {
-//                            startActivity(new Intent(User_Activity.this, UserList.class));
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError error) {
-//
-//                }
-//            });
-//        }
         return super.onOptionsItemSelected(item);
     }
 }

@@ -32,7 +32,7 @@ public class OrderManagementActivity extends AppCompatActivity {
         cardOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(OrderManagementActivity.this, OrderListActivity.class));
             }
         });
 

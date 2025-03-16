@@ -48,6 +48,13 @@ public class OrderListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_list);
 
+        getSupportActionBar().setTitle("Danh sách đơn hàng");
+
+        // Hiển thị nút Back trên ActionBar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         spinnerStatus = findViewById(R.id.spinner_status);
         listViewOrders = findViewById(R.id.list_view_orders);
 
@@ -345,10 +352,13 @@ public class OrderListActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_back, menu);
         return true;
     }
+
+
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_back) {
-            finish(); // Đóng Activity hiện tại
+    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Khi bấm nút Back, quay về Activity trước đó
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
