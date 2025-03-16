@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,6 +45,13 @@ public class AddProductActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
+
+        getSupportActionBar().setTitle("Thêm sản phẩm");
+
+        // Hiển thị nút Back trên ActionBar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Khởi tạo Firebase
         databaseReference = FirebaseDatabase.getInstance().getReference("TinkDrao").child("Drink");
@@ -265,4 +273,14 @@ public class AddProductActivity extends AppCompatActivity {
             Toast.makeText(this, "Lỗi không xác định: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 }
+
+    @Override
+    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Khi bấm nút Back, quay về Activity trước đó
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

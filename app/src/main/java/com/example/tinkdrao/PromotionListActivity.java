@@ -2,6 +2,7 @@ package com.example.tinkdrao;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -32,6 +33,13 @@ public class PromotionListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_promotion_list);
+
+        getSupportActionBar().setTitle("Danh sách khuyến mãi");
+
+        // Hiển thị nút Back trên ActionBar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Khởi tạo Firebase
         promotionsRef = FirebaseDatabase.getInstance().getReference("TinkDrao").child("Promotions");
@@ -125,5 +133,15 @@ public class PromotionListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadPromotions();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Khi bấm nút Back, quay về Activity trước đó
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

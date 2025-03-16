@@ -2,6 +2,7 @@ package com.example.tinkdrao;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,6 +36,13 @@ public class CreatePromotionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_promotion);
+
+        getSupportActionBar().setTitle("");
+
+        // Hiển thị nút Back trên ActionBar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Khởi tạo Firebase
         drinksRef = FirebaseDatabase.getInstance().getReference("TinkDrao").child("Drink");
@@ -155,5 +163,15 @@ public class CreatePromotionActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Toast.makeText(CreatePromotionActivity.this, "Lỗi tạo khuyến mãi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Khi bấm nút Back, quay về Activity trước đó
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

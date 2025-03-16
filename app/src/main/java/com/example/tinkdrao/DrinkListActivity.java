@@ -2,6 +2,7 @@ package com.example.tinkdrao;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,13 @@ public class DrinkListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drink_list);
+
+        getSupportActionBar().setTitle("Quản lý sản phẩm");
+
+        // Hiển thị nút Back trên ActionBar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         recyclerView = findViewById(R.id.recycler_view);
         fabAddDrink = findViewById(R.id.fab_add_drink);
@@ -104,5 +112,15 @@ public class DrinkListActivity extends AppCompatActivity {
             }
         }
         adapter.setDrinks(filteredList);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Khi bấm nút Back, quay về Activity trước đó
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

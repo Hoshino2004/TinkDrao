@@ -328,7 +328,6 @@ public class User_Activity extends AppCompatActivity {
                                 public void onClick(View view) {
                                     Intent intent = new Intent(User_Activity.this, DrinkListActivity.class );
                                     startActivity(intent);
-                                    finish();
                                 }
                             });
 //                        btnChung.setOnClickListener(new View.OnClickListener() {

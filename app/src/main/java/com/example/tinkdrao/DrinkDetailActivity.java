@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,7 +48,6 @@ public class DrinkDetailActivity extends AppCompatActivity {
     private EditText edtQ;
     private DatabaseReference databaseReference, favoritesReference, cartRef;
     private DecimalFormat decimalFormat;
-    private ImageButton btnBack;
     private Drink currentDrink;
     private FirebaseUser mUser;
     private ValueEventListener drinkDataListener; // Lưu listener để hủy sau
@@ -63,6 +63,13 @@ public class DrinkDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drink_detail);
+
+        getSupportActionBar().setTitle("Chi tiết sản phẩm");
+
+        // Hiển thị nút Back trên ActionBar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Khởi tạo DecimalFormat
         decimalFormat = new DecimalFormat("#,###");
@@ -179,8 +186,6 @@ public class DrinkDetailActivity extends AppCompatActivity {
                 }
             }
         });
-
-        btnBack.setOnClickListener(v -> finish());
 
         btnFavorite.setOnClickListener(v -> {
             if(mUser!=null)
@@ -462,7 +467,6 @@ public class DrinkDetailActivity extends AppCompatActivity {
         tvQuantity = findViewById(R.id.tvQuantity);
         tvUnit = findViewById(R.id.tvUnit);
         btnAction = findViewById(R.id.btnAction);
-        btnBack = findViewById(R.id.btnBack);
         btnFavorite = findViewById(R.id.btnFavorite);
         btnDQ = findViewById(R.id.btnDecrease);
         btnIQ = findViewById(R.id.btnIncrease);
@@ -571,5 +575,15 @@ public class DrinkDetailActivity extends AppCompatActivity {
         if (drinkDataListener != null) {
             databaseReference.removeEventListener(drinkDataListener); // Hủy listener
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Khi bấm nút Back, quay về Activity trước đó
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

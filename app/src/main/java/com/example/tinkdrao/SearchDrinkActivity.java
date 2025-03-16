@@ -62,7 +62,7 @@ public class SearchDrinkActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_drink);
 
-        getSupportActionBar().setTitle("Danh sách nước");
+        getSupportActionBar().setTitle("Danh sách sản phẩm");
 
         // Hiển thị nút Back trên ActionBar
         if (getSupportActionBar() != null) {
