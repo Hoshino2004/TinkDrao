@@ -30,6 +30,23 @@
                 android:textSize="16sp"
                 android:textColor="#212121"
                 android:layout_marginBottom="8dp" />
+            <TextView
+                android:id="@+id/tv_detail_address"
+                android:layout_width="match_parent"
+                android:textStyle="bold"
+
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_detail_total"
+                android:text="Địa chỉ: " />
+
+            <TextView
+                android:id="@+id/tv_detail_phone_number"
+                android:layout_width="match_parent"
+                android:textStyle="bold"
+
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_detail_address"
+                android:text="Số điện thoại: " />
 
             <TextView
                 android:id="@+id/tv_detail_status"
@@ -38,6 +55,14 @@
                 android:textSize="16sp"
                 android:textColor="#212121"
                 android:layout_marginBottom="8dp" />
+            <TextView
+                android:id="@+id/tv_detail_status_pay"
+                android:textStyle="bold"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_edit_status"
+                android:text="Trạng thái thanh toán: " />
 
             <TextView
                 android:id="@+id/tv_detail_quantity"
@@ -112,6 +137,16 @@
             android:text="Cập nhật tình trạng"
             android:visibility="gone"
             android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"
+            android:padding="8dp"
+            android:layout_marginEnd="8dp" />
+        <Button
+            android:id="@+id/btn_cancel_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hủy đơn hàng"
+            android:visibility="gone"
+            android:backgroundTint="#F44336"
             android:textColor="#FFFFFF"
             android:padding="8dp"
             android:layout_marginEnd="8dp" />
