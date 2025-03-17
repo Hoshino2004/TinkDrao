@@ -181,7 +181,7 @@ public class ThongKeActivity extends AppCompatActivity {
                             if (total == null) continue; // Bỏ qua nếu total null
 
                             // Kiểm tra điều kiện status
-                            if ("Đã vận chuyển".equals(statusOrder) && "Đã thanh toán".equals(statusPay)) {
+                            if ("Giao hàng thành công".equals(statusOrder) && "Đã thanh toán".equals(statusPay)) {
                                 try {
                                     Date orderDate = dateTimeFormat.parse(createdAt);
                                     // Kiểm tra nếu đơn hàng nằm trong khoảng thời gian
