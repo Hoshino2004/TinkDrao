@@ -47,9 +47,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private DatabaseReference statusReference;
     private boolean isEditing = false; // Trạng thái chỉnh sửa
-
-    private DatabaseReference userRef;       // Thêm dòng này
-    private DatabaseReference orderRef;      // Thêm dòng này
+    static String phoneNumber;
     private FirebaseUser mUser;              // Thêm dòng này
     private long id = 0;                     // Thêm dòng này
     LocalDateTime now = LocalDateTime.now(); // Thêm dòng này
@@ -62,14 +60,14 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Chi tiết đơn hàng");
 
+        phoneNumber = getIntent().getStringExtra("phoneNo");
+
         // Hiển thị nút Back trên ActionBar
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         mUser = FirebaseAuth.getInstance().getCurrentUser(); // Thêm dòng này
-        userRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Users/" + mUser.getUid()); // Thêm dòng này
-        orderRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Order/" + mUser.getUid()); // Thêm dòng này
 
         tvCreatedAt = findViewById(R.id.tv_detail_created_at);
         tvStatus = findViewById(R.id.tv_detail_status);
@@ -292,11 +290,6 @@ public class OrderDetailActivity extends AppCompatActivity {
         finish(); // Tùy chọn: đóng OrderDetailActivity sau khi chuyển
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_back, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {

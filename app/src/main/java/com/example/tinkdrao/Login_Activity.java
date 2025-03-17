@@ -149,7 +149,7 @@ public class Login_Activity extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.mnHome) {
+        if (item.getItemId() == R.id.mnUser) {
             startActivity(new Intent(Login_Activity.this, MainActivity.class));
         }
         return super.onOptionsItemSelected(item);

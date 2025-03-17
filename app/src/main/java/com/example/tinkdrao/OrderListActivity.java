@@ -42,11 +42,14 @@ public class OrderListActivity extends AppCompatActivity {
     private DatabaseReference userReference;
     private DatabaseReference statusReference;
     private FirebaseAuth auth;
+    static String phoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_list);
+
+        phoneNumber = getIntent().getStringExtra("phoneNo");
 
         getSupportActionBar().setTitle("Danh sách đơn hàng");
 
@@ -66,11 +69,6 @@ public class OrderListActivity extends AppCompatActivity {
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
             currentUserId = currentUser.getUid();
-        } else {
-            currentUserId = null;
-            Toast.makeText(this, "Vui lòng đăng nhập để xem đơn hàng", Toast.LENGTH_LONG).show();
-            finish();
-            return;
         }
 
         loadOrdersFromFirebase();
@@ -196,16 +194,6 @@ public class OrderListActivity extends AppCompatActivity {
                     });
                 }
 
-//                if (btnReorder != null) {
-//                    if ("User".equals(currentUserRole) && order.getStatusOrder() != null &&
-//                            (order.getStatusOrder().equals("Giao hàng thành công") || order.getStatusOrder().equals("Đã hủy"))) {
-//                        btnReorder.setVisibility(View.VISIBLE);
-//                        btnReorder.setOnClickListener(v -> reorder(order));
-//                    } else {
-//                        btnReorder.setVisibility(View.GONE);
-//                    }
-//                }
-
                 return view;
             }
         };
@@ -218,6 +206,7 @@ public class OrderListActivity extends AppCompatActivity {
                     Intent detailIntent = new Intent(OrderListActivity.this, OrderDetailActivity.class);
                     detailIntent.putExtra("order", selectedOrder);
                     detailIntent.putExtra("role", currentUserRole);
+                    detailIntent.putExtra("phoneNo",phoneNumber);
                     startActivity(detailIntent);
                 } else {
                     Toast.makeText(OrderListActivity.this, "Đơn hàng không hợp lệ", Toast.LENGTH_SHORT).show();
@@ -231,68 +220,122 @@ public class OrderListActivity extends AppCompatActivity {
     }
 
     private void loadOrdersFromFirebase() {
-        userReference.child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    String role = snapshot.child("role").getValue(String.class);
-                    currentUserRole = (role != null && role.equals("Admin")) ? "Admin" : "User";
+        if(currentUserId!=null)
+        {
+            userReference.child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        String role = snapshot.child("role").getValue(String.class);
+                        currentUserRole = (role != null && role.equals("Admin")) ? "Admin" : "User";
 
-                    databaseReference.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            orderList.clear();
-                            if ("Admin".equals(currentUserRole)) {
-                                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                                    for (DataSnapshot orderSnapshot : userSnapshot.getChildren()) {
-                                        Order order = orderSnapshot.getValue(Order.class);
-                                        if (order != null) {
-                                            orderList.add(order);
+                        databaseReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                orderList.clear();
+                                if ("Admin".equals(currentUserRole)) {
+                                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                                        for (DataSnapshot orderSnapshot : userSnapshot.getChildren()) {
+                                            Order order = orderSnapshot.getValue(Order.class);
+                                            if (order != null) {
+                                                orderList.add(order);
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    DataSnapshot userSnapshot = snapshot.child(currentUserId);
+                                    if (userSnapshot.exists()) {
+                                        for (DataSnapshot orderSnapshot : userSnapshot.getChildren()) {
+                                            Order order = orderSnapshot.getValue(Order.class);
+                                            if (order != null) {
+                                                orderList.add(order);
+                                            }
                                         }
                                     }
                                 }
-                            } else {
-                                DataSnapshot userSnapshot = snapshot.child(currentUserId);
-                                if (userSnapshot.exists()) {
-                                    for (DataSnapshot orderSnapshot : userSnapshot.getChildren()) {
-                                        Order order = orderSnapshot.getValue(Order.class);
-                                        if (order != null) {
-                                            orderList.add(order);
-                                        }
+                                // Sắp xếp orderList theo createdAt giảm dần
+                                Collections.sort(orderList, new Comparator<Order>() {
+                                    @Override
+                                    public int compare(Order o1, Order o2) {
+                                        String createdAt1 = o1.getCreatedAt() != null ? o1.getCreatedAt() : "";
+                                        String createdAt2 = o2.getCreatedAt() != null ? o2.getCreatedAt() : "";
+                                        return createdAt2.compareTo(createdAt1); // Giảm dần (mới nhất trước)
                                     }
-                                }
+                                });
+                                filterOrders(spinnerStatus.getSelectedItem() != null ? spinnerStatus.getSelectedItem().toString() : "Tất cả");
                             }
-                            // Sắp xếp orderList theo createdAt giảm dần
-                            Collections.sort(orderList, new Comparator<Order>() {
-                                @Override
-                                public int compare(Order o1, Order o2) {
-                                    String createdAt1 = o1.getCreatedAt() != null ? o1.getCreatedAt() : "";
-                                    String createdAt2 = o2.getCreatedAt() != null ? o2.getCreatedAt() : "";
-                                    return createdAt2.compareTo(createdAt1); // Giảm dần (mới nhất trước)
-                                }
-                            });
-                            filterOrders(spinnerStatus.getSelectedItem() != null ? spinnerStatus.getSelectedItem().toString() : "Tất cả");
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Toast.makeText(OrderListActivity.this, "Lỗi khi tải dữ liệu: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    });
-                } else {
-                    Toast.makeText(OrderListActivity.this, "Không tìm thấy thông tin người dùng", Toast.LENGTH_LONG).show();
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(OrderListActivity.this, "Lỗi khi tải dữ liệu: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } else {
+                        Toast.makeText(OrderListActivity.this, "Không tìm thấy thông tin người dùng", Toast.LENGTH_LONG).show();
+                        currentUserRole = "User";
+                        loadUserOrders();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(OrderListActivity.this, "Lỗi khi kiểm tra role: " + error.getMessage(), Toast.LENGTH_LONG).show();
                     currentUserRole = "User";
                     loadUserOrders();
                 }
-            }
+            });
+        }
+        else {
+            userReference.child(phoneNumber).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        currentUserRole = "User";
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(OrderListActivity.this, "Lỗi khi kiểm tra role: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                currentUserRole = "User";
-                loadUserOrders();
-            }
-        });
+                        databaseReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                orderList.clear();
+                                    DataSnapshot userSnapshot = snapshot.child(phoneNumber);
+                                    if (userSnapshot.exists()) {
+                                        for (DataSnapshot orderSnapshot : userSnapshot.getChildren()) {
+                                            Order order = orderSnapshot.getValue(Order.class);
+                                            if (order != null) {
+                                                orderList.add(order);
+                                            }
+                                        }
+                                }
+                                // Sắp xếp orderList theo createdAt giảm dần
+                                Collections.sort(orderList, new Comparator<Order>() {
+                                    @Override
+                                    public int compare(Order o1, Order o2) {
+                                        String createdAt1 = o1.getCreatedAt() != null ? o1.getCreatedAt() : "";
+                                        String createdAt2 = o2.getCreatedAt() != null ? o2.getCreatedAt() : "";
+                                        return createdAt2.compareTo(createdAt1); // Giảm dần (mới nhất trước)
+                                    }
+                                });
+                                filterOrders(spinnerStatus.getSelectedItem() != null ? spinnerStatus.getSelectedItem().toString() : "Tất cả");
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(OrderListActivity.this, "Lỗi khi tải dữ liệu: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } else {
+                        currentUserRole = "User";
+                        loadUserOrders();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(OrderListActivity.this, "Lỗi khi kiểm tra role: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    currentUserRole = "User";
+                    loadUserOrders();
+                }
+            });
+        }
     }
 
     private void loadUserOrders() {
@@ -300,12 +343,27 @@ public class OrderListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 orderList.clear();
-                DataSnapshot userSnapshot = snapshot.child(currentUserId);
-                if (userSnapshot.exists()) {
-                    for (DataSnapshot orderSnapshot : userSnapshot.getChildren()) {
-                        Order order = orderSnapshot.getValue(Order.class);
-                        if (order != null) {
-                            orderList.add(order);
+                if(currentUserId !=null)
+                {
+                    DataSnapshot userSnapshot = snapshot.child(currentUserId);
+                    if (userSnapshot.exists()) {
+                        for (DataSnapshot orderSnapshot : userSnapshot.getChildren()) {
+                            Order order = orderSnapshot.getValue(Order.class);
+                            if (order != null) {
+                                orderList.add(order);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    DataSnapshot userSnapshot = snapshot.child(phoneNumber);
+                    if (userSnapshot.exists()) {
+                        for (DataSnapshot orderSnapshot : userSnapshot.getChildren()) {
+                            Order order = orderSnapshot.getValue(Order.class);
+                            if (order != null) {
+                                orderList.add(order);
+                            }
                         }
                     }
                 }
@@ -346,14 +404,6 @@ public class OrderListActivity extends AppCompatActivity {
     private void reorder(Order order) {
         Toast.makeText(this, "Đã thêm đơn hàng " + order.getId() + " vào giỏ hàng", Toast.LENGTH_SHORT).show();
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_back, menu);
-        return true;
-    }
-
-
     @Override
     public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {

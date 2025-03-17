@@ -431,6 +431,7 @@ public class Cart_Activity extends AppCompatActivity {
             // Chuyển về UserActivity
             Intent intent = new Intent(Cart_Activity.this, User_Activity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra("phoneNo", phoneNumber);
             startActivity(intent);
             finish(); // Đóng Cart_Activity
             return true;

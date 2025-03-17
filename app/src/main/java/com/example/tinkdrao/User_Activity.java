@@ -1,6 +1,7 @@
 package com.example.tinkdrao;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -330,69 +331,20 @@ public class User_Activity extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-//                        btnChung.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                AlertDialog.Builder builder = new AlertDialog.Builder(User_Activity.this);
-//                                View dialogView = getLayoutInflater().inflate(R.layout.admin_password, null);
-//                                EditText edtAdminPassword = dialogView.findViewById(R.id.edtPasswordAdmin);
-//
-//                                builder.setView(dialogView);
-//                                AlertDialog dialog = builder.create();
-//                                dialogView.findViewById(R.id.btnLogAdmin).setOnClickListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View view) {
-//                                        String passwordAdmin = "[" + edtAdminPassword.getText().toString().trim() + "]";
-//                                        adminCheckRef.addValueEventListener(new ValueEventListener() {
-//                                            @Override
-//                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                                if (snapshot.exists()) {
-//                                                    if (passwordAdmin.equals(snapshot.getValue().toString())) {
-//                                                        Toast.makeText(User_Activity.this, "Ngon lành", Toast.LENGTH_SHORT).show();
-//                                                        dialog.dismiss();
-//                                                        startActivity(new Intent(User_Activity.this, Retrieve_Data_Activity.class));
-//                                                    } else {
-//                                                        Toast.makeText(User_Activity.this, "Sai rồi bạn ơi", Toast.LENGTH_SHORT).show();
-//                                                        dialog.dismiss();
-//                                                    }
-//                                                }
-//                                            }
-//
-//                                            @Override
-//                                            public void onCancelled(@NonNull DatabaseError error) {
-//
-//                                            }
-//                                        });
-//                                    }
-//                                });
-//                                if (dialog.getWindow() != null) {
-//                                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-//                                }
-//                                dialog.show();
-//                            }
-//                        });
-                            btnChangePassword.setText("Quản lý \n Đơn hàng");
+                            btnChangePassword.setText("Quản lý \n đơn hàng");
                             btnChangePassword.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    startActivity(new Intent(User_Activity.this, OrderManagementActivity.class));
+                                    startActivity(new Intent(User_Activity.this, OrderListActivity.class));
                                 }
                             });
-//                        btnChangePassword.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                startActivity(new Intent(User_Activity.this, ReportAdminActivity.class));
-//                            }
-//                        });
-                            btnHDTN.setText("Tư vấn");
-//                        btnHDTN.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                Intent intent = new Intent(User_Activity.this, HDTN_Activity.class);
-//                                intent.putExtra("role", roleUserDetail);
-//                                startActivity(intent);
-//                            }
-//                        });
+                            btnHDTN.setText("Thống kê\ndoanh thu");
+                            btnHDTN.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    startActivity(new Intent(User_Activity.this, ThongKeActivity.class));
+                                }
+                            });
                         }
                     }
                 }
@@ -403,29 +355,32 @@ public class User_Activity extends AppCompatActivity {
             });
         }
         else {
+            btnLogout.setText("Đăng nhập");
             phonenoUser.setText(phoneNumber);
             btnChangePassword.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(User_Activity.this, "Bạn cần đăng nhập để thực hiện tính năng này!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(User_Activity.this, "Bạn cần phải đăng nhập để thực hiện tính năng này!", Toast.LENGTH_SHORT).show();
                 }
             });
             btnChung.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(User_Activity.this, "Bạn cần đăng nhập để thực hiện tính năng này!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(User_Activity.this, "Bạn cần phải đăng nhập để thực hiện tính năng này!", Toast.LENGTH_SHORT).show();
                 }
             });
             btnLogout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(User_Activity.this, "Bạn cần đăng nhập để thực hiện tính năng này!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(User_Activity.this, Login_Activity.class));
                 }
             });
             btnHDTN.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //Nhảy qua đơn hàng
+                    Intent intent = new Intent(User_Activity.this, OrderListActivity.class);
+                    intent.putExtra("phoneNo",phoneNumber);
+                    startActivity(intent);
                 }
             });
         }
@@ -442,7 +397,6 @@ public class User_Activity extends AppCompatActivity {
             });
         }
         else {
-            Toast.makeText(this, "Bạn cần phải đăng nhập để thực hiện tính năng này!", Toast.LENGTH_SHORT).show();
         }
     }
 
