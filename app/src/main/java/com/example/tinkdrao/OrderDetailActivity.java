@@ -320,8 +320,6 @@ public class OrderDetailActivity extends AppCompatActivity {
                         String userId = userSnapshot.getKey();
                         databaseReference.child(userId).child(order.getId()).child("statusPay")
                                 .setValue(newStatusPay)
-                                .addOnSuccessListener(aVoid ->
-                                        Toast.makeText(OrderDetailActivity.this, "Đã cập nhật trạng thái thanh toán", Toast.LENGTH_SHORT).show())
                                 .addOnFailureListener(e ->
                                         Toast.makeText(OrderDetailActivity.this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                         break;
