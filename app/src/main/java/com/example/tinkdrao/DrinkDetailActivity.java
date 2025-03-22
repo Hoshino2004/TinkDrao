@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,6 +28,7 @@ import com.bumptech.glide.Glide;
 import com.example.tinkdrao.adapter.CommentAdapter;
 import com.example.tinkdrao.model.Cart;
 import com.example.tinkdrao.model.Comment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -46,23 +48,41 @@ public class DrinkDetailActivity extends AppCompatActivity {
     private Button btnAction, btnFavorite, btnIQ, btnDQ;
     private int quantity;
     private EditText edtQ;
-    private DatabaseReference databaseReference, favoritesReference, cartRef;
+    private DatabaseReference databaseReference, favoritesReference, cartRef, checkCartRef;
     private DecimalFormat decimalFormat;
     private Drink currentDrink;
     private FirebaseUser mUser;
     private ValueEventListener drinkDataListener; // Lưu listener để hủy sau
     private boolean isActivityDestroyed = false;
     private static String phoneNo;
-    private TextView tvAverageRating;
+    private TextView tvAverageRating, badge;
+    private FloatingActionButton fabCart;
     private Button btnComment;
     private DatabaseReference commentRef;
     private ArrayList<Comment> commentList = new ArrayList<>();
     private CommentAdapter commentAdapter;
+    private FrameLayout btnCartDetail;
+    private int dem = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drink_detail);
+
+        checkCartRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Cart");
+
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        fabCart = findViewById(R.id.fabCart);
+        badge = findViewById(R.id.badge);
+        btnCartDetail = findViewById(R.id.btnCartDetail);
+
+        fabCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(DrinkDetailActivity.this, Cart_Activity.class));
+            }
+        });
 
         getSupportActionBar().setTitle("Chi tiết sản phẩm");
 
@@ -77,8 +97,6 @@ public class DrinkDetailActivity extends AppCompatActivity {
 
         // Khởi tạo views
         initializeViews();
-
-        mUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // Lấy drinkId từ Intent
         long drinkId = getIntent().getLongExtra("id", 0);
@@ -198,6 +216,35 @@ public class DrinkDetailActivity extends AppCompatActivity {
             }
             else {
                 Toast.makeText(this, "Vui lòng đăng nhập để sử dụng chức năng này!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        if (mUser!=null && phoneNo == null)
+        {
+            checkCart(mUser.getUid());
+        }
+        else if (mUser == null && phoneNo !=null)
+        {
+            checkCart(phoneNo);
+        }
+        else {
+            btnCartDetail.setVisibility(View.GONE);
+        }
+    }
+
+    private void checkCart(String uid) {
+        checkCartRef.child(uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    dem = (int)snapshot.getChildrenCount();
+                }
+                badge.setText(String.valueOf(dem));
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
@@ -412,8 +459,14 @@ public class DrinkDetailActivity extends AppCompatActivity {
                             if (snapshot.exists()) {
                                 Drink drinkCrt = snapshot.getValue(Drink.class);
                                 Cart newCart = new Cart(Long.valueOf(drinkId), drinkCrt.getImageUrl(), drinkCrt.getName(), drinkCrt.getPrice(), drinkCrt.getDiscount(), drinkCrt.getDrinkType(), Integer.parseInt(edtQ.getText().toString()), drinkCrt.getUnit());
-                                cartRef.child(drinkId).setValue(newCart);
-                                Toast.makeText(DrinkDetailActivity.this, "Đã thêm vào giỏ hàng!", Toast.LENGTH_SHORT).show();
+                                if(Integer.parseInt(edtQ.getText().toString()) <= newCart.getQuantity())
+                                {
+                                    cartRef.child(drinkId).setValue(newCart);
+                                    Toast.makeText(DrinkDetailActivity.this, "Đã thêm vào giỏ hàng!", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    Toast.makeText(DrinkDetailActivity.this, "Không thể thêm!", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
 
@@ -522,7 +575,7 @@ public class DrinkDetailActivity extends AppCompatActivity {
         tvQuantity.setText("Tồn kho: " + drink.getQuantity());
         tvUnit.setText("Đơn vị: " + drink.getUnit());
 
-        if (drink.getQuantity() == 0) {
+        if (drink.getQuantity() <= 0) {
             btnAction.setVisibility(View.GONE);
         }
     }

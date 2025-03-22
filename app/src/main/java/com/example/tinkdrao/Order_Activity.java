@@ -150,7 +150,9 @@ public class Order_Activity extends AppCompatActivity {
                                             tvSuccessMessage.setVisibility(View.VISIBLE);
                                             findViewById(R.id.main).setAlpha(1.0f); // Khôi phục giao diện
                                             // Quay lại sau 2 giây
-                                            new Handler(Looper.getMainLooper()).postDelayed(() -> finish(), 1000);
+                                            Intent intent = new Intent(Order_Activity.this, Thanks_Order_Activity.class);
+                                            intent.putExtra("idOrder", order.getId());
+                                            new Handler(Looper.getMainLooper()).postDelayed(() -> startActivity(intent), 1000);
                                         }, 2000); // Delay 2 giây để mô phỏng loading
                                     })
                                     .addOnFailureListener(e -> {
@@ -259,7 +261,9 @@ public class Order_Activity extends AppCompatActivity {
                                                         tvSuccessMessage.setVisibility(View.VISIBLE);
                                                         findViewById(R.id.main).setAlpha(1.0f); // Khôi phục giao diện
                                                         // Quay lại sau 2 giây
-                                                        new Handler(Looper.getMainLooper()).postDelayed(() -> finish(), 1000);
+                                                        Intent intent = new Intent(Order_Activity.this, Thanks_Order_Activity.class);
+                                                        intent.putExtra("idOrder",order.getId());
+                                                        new Handler(Looper.getMainLooper()).postDelayed(() -> startActivity(intent), 1000);
                                                     }, 2000); // Delay 2 giây để mô phỏng loading
                                                 })
                                                 .addOnFailureListener(e -> {

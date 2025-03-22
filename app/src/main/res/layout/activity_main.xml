@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
     <!-- ScrollView chứa nội dung có thể cuộn -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -21,83 +20,103 @@
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
-
             <!-- Tiêu đề tùy chỉnh -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sản phẩm bán chạy"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#2C3E50"
-                android:layout_marginTop="15dp"
                 android:layout_marginLeft="10dp"
-                android:paddingBottom="5dp"/>
-
+                android:layout_marginTop="15dp"
+                android:paddingBottom="5dp"
+                android:text="Sản phẩm bán chạy"
+                android:textColor="#2C3E50"
+                android:textSize="20sp"
+                android:textStyle="bold" />
             <!-- RecyclerView ngang -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/drinksRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"/>
+                android:orientation="horizontal"
+                android:overScrollMode="never" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
-
                 <!-- Tiêu đề tùy chỉnh -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sản phẩm mới nhất"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#2C3E50"
-                    android:layout_marginTop="5dp"
                     android:layout_marginLeft="10dp"
-                    android:paddingBottom="10dp"/>
-
+                    android:layout_marginTop="5dp"
+                    android:paddingBottom="10dp"
+                    android:text="Sản phẩm mới nhất"
+                    android:textColor="#2C3E50"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
                 <!-- View để đẩy "Xem tất cả" sang phải -->
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
+                    android:layout_weight="1" />
                 <!-- TextView Xem tất cả -->
                 <TextView
                     android:id="@+id/tvViewAll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Xem tất cả >"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#F27A56"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="6dp"
+                    android:layout_gravity="end"
                     android:gravity="center"
-                    android:layout_gravity="end"/>
-
+                    android:paddingStart="8dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="6dp"
+                    android:text="Xem tất cả >"
+                    android:textColor="#F27A56"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
             </LinearLayout>
-
             <!-- RecyclerView ngang -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/drinksRecyclerView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"/>
-
+                android:orientation="horizontal"
+                android:overScrollMode="never" />
         </LinearLayout>
-
-
     </androidx.core.widget.NestedScrollView>
 
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:id="@+id/btnCart"
+        android:layout_margin="16dp">
+
+        <!-- FloatingActionButton -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabCart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#000000"
+            android:src="@drawable/ic_cart"
+            android:tint="@android:color/white"
+            android:elevation="2dp" />  <!-- Giảm độ cao của FAB -->
+
+        <!-- Badge (TextView) -->
+        <TextView
+            android:id="@+id/badge"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="top|end"
+            android:background="@drawable/circle_badge"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:elevation="10dp"/>  <!-- Đẩy TextView lên trên FAB -->
+    </FrameLayout>
 
 </FrameLayout>

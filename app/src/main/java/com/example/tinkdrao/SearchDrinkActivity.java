@@ -1,5 +1,6 @@
 package com.example.tinkdrao;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Editable;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -21,7 +23,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tinkdrao.adapter.SearchDrinkAdapter;
 import com.example.tinkdrao.model.Drink;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.slider.RangeSlider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,17 +55,35 @@ public class SearchDrinkActivity extends AppCompatActivity {
     private boolean isUpdating = false;
     private float minPrice = 0;
     private float maxPrice = 500000;
-    private TextView spinnerDrinkType;
+    private TextView spinnerDrinkType, badge;
 
     ArrayList<String> drinkTypeList;
 
     private List<String> selectedDrinkType = new ArrayList<>();
     private DatabaseReference drinkTypeRef;
+    private int dem = 0;
+    private FloatingActionButton fabCart;
+    private FirebaseUser mUser;
+    private FrameLayout btnCartSearch;
+    private String phoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_drink);
+
+        fabCart = findViewById(R.id.fabCart);
+        badge = findViewById(R.id.badge);
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+        phoneNumber = getIntent().getStringExtra("phoneNo");
+        btnCartSearch = findViewById(R.id.btnCartSearch);
+
+        fabCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SearchDrinkActivity.this, Cart_Activity.class));
+            }
+        });
 
         getSupportActionBar().setTitle("Danh sách sản phẩm");
 
@@ -72,6 +95,19 @@ public class SearchDrinkActivity extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference("TinkDrao");
         drinkRef = databaseReference.child("Drink");
         drinkTypeRef = databaseReference.child("DrinkType");
+
+        if(mUser!=null && phoneNumber == null)
+        {
+            checkCart(mUser.getUid());
+        }
+        else if(mUser==null && phoneNumber != null)
+        {
+            checkCart(phoneNumber);
+        }
+        else {
+            btnCartSearch.setVisibility(View.GONE);
+        }
+
 
         setUpSearchDrink();
         setupSpinners();
@@ -97,14 +133,6 @@ public class SearchDrinkActivity extends AppCompatActivity {
             }
         });
 
-        // Thiết lập DecimalFormat với dấu phẩy và 2 chữ số thập phân
-//        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-//        symbols.setDecimalSeparator(','); // Dùng dấu phẩy làm phân cách thập phân
-//        symbols.setGroupingSeparator('.'); // Dùng dấu chấm làm phân cách hàng nghìn
-//        priceFormat = new DecimalFormat("#,##", symbols);
-//        priceFormat.setMinimumFractionDigits(2); // Đảm bảo luôn có 2 chữ số thập phân
-//        priceFormat.setMaximumFractionDigits(2);
-
         decimalFormat.setDecimalSeparatorAlwaysShown(false);
 
         btnPriceFilter = findViewById(R.id.btnFilterPrice);
@@ -113,6 +141,23 @@ public class SearchDrinkActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showPriceFilterDialog();
+            }
+        });
+    }
+
+    private void checkCart(String uid) {
+        databaseReference.child("Cart").child(uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    dem = (int)snapshot.getChildrenCount();
+                }
+                badge.setText(String.valueOf(dem));
+            }
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+
             }
         });
     }

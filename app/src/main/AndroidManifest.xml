@@ -15,6 +15,9 @@
         android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".Thanks_Order_Activity"
+            android:exported="false" />
+        <activity
             android:name=".OrderAnalyticDetailActivity"
             android:exported="false" />
         <activity

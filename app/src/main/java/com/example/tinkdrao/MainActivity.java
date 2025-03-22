@@ -1,10 +1,12 @@
 package com.example.tinkdrao;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +16,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,8 @@ import com.example.tinkdrao.adapter.DrinkAdapter;
 import com.example.tinkdrao.adapter.ImageSliderAdapter;
 import com.example.tinkdrao.adapter.NewDrinkAdapter;
 import com.example.tinkdrao.model.Drink;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -49,14 +54,28 @@ public class MainActivity extends AppCompatActivity {
     private NewDrinkAdapter newDrinkAdapter;
     private List<Drink> drinkList;
     private List<Drink> newDrinkList;
-    private TextView tvViewAll;
+    private TextView tvViewAll, badge;
     static String phoneNumber;
+    private FloatingActionButton fabCart;
+    private int dem = 0;
     FirebaseAuth mAuth;
     FirebaseUser mUser;
+    private FrameLayout btnCartMain;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        fabCart = findViewById(R.id.fabCart);
+        badge = findViewById(R.id.badge);
+        btnCartMain = findViewById(R.id.btnCart);
+
+        fabCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, Cart_Activity.class));
+            }
+        });
 
         phoneNumber = getIntent().getStringExtra("phoneNo");
         databaseReference = FirebaseDatabase.getInstance().getReference("TinkDrao");
@@ -67,7 +86,9 @@ public class MainActivity extends AppCompatActivity {
         tvViewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, SearchDrinkActivity.class));
+                Intent intent = new Intent(MainActivity.this, SearchDrinkActivity.class);
+                intent.putExtra("phoneNo", phoneNumber);
+                startActivity(intent);
             }
         });
 
@@ -76,7 +97,33 @@ public class MainActivity extends AppCompatActivity {
 
         setUpRecyclerView();
         setUpImageSlider();
+        if (mUser != null && phoneNumber == null)
+        {
+            checkCart(mUser.getUid());
+        }
+        else if (mUser == null && phoneNumber != null){
+            checkCart(phoneNumber);
+        }
+        else {
+            btnCartMain.setVisibility(View.GONE);
+        }
+    }
 
+    private void checkCart(String uid) {
+        databaseReference.child("Cart").child(uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    dem = (int)snapshot.getChildrenCount();
+                }
+                badge.setText(String.valueOf(dem));
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void setUpRecyclerView() {
@@ -209,26 +256,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.mnUser) {
-//            if (mUser == null) {
-//                Intent intent = new Intent(this, Login_Activity.class);
-//                startActivity(intent);
-//                finish();
-//            } else {
-//                if (!mUser.isEmailVerified()) {
-//                    mAuth.signOut(); // Đăng xuất người dùng nếu họ chưa xác thực
-//                    startActivity(new Intent(this, Login_Activity.class));
-//                    finish();
-//                } else if (phoneNumber!=null) {
-//                    Intent intent = new Intent(MainActivity.this, User_Activity.class);
-//                    intent.putExtra("phoneNo",phoneNumber);
-//                    startActivity(intent);
-//                    finish();
-//                } else {
-//                    Intent intent = new Intent(MainActivity.this, User_Activity.class);
-//                    startActivity(intent);
-//                    finish();
-//                }
-//            }
             if(mUser!=null)
             {
                 if (!mUser.isEmailVerified()) {
