@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     private long id = 0;
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+    private DecimalFormat decimalFormat; // Định dạng giá tiền
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,9 @@ public class OrderDetailActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        decimalFormat = new DecimalFormat("#,###"); // Dấu chấm: 12.000
+        decimalFormat.setDecimalSeparatorAlwaysShown(false); // Không hiển thị phần thập phân
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -92,7 +97,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         // Hiển thị thông tin cơ bản
         tvCreatedAt.setText("Ngày tạo: " + (order.getCreatedAt() != null ? order.getCreatedAt() : "Không rõ"));
         tvStatus.setText("Tình trạng: " + (order.getStatusOrder() != null ? order.getStatusOrder() : "Không rõ"));
-        tvTotal.setText("Tổng tiền: " + (order.getTotal() != null ? order.getTotal() + " VNĐ" : "0 VNĐ"));
+        tvTotal.setText("Tổng tiền: " + (order.getTotal() != null ? decimalFormat.format(order.getTotal()) + " VNĐ" : "0 VNĐ"));
         tvAddress.setText("Địa chỉ: " + (order.getAddress() != null ? order.getAddress() : "Không rõ"));
         tvPhoneNumber.setText("Số điện thoại: " + (order.getPhoneNo() != null ? order.getPhoneNo() : "Không rõ"));
         updateStatusPayBasedOnOrderStatus();
