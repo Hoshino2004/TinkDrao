@@ -17,14 +17,15 @@
         android:layout_marginBottom="16dp" />
 
     <!-- Danh sách đơn hàng -->
+    <!-- Danh sách đơn hàng -->
     <ListView
         android:id="@+id/list_view_orders"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-    android:divider="@null"
-    android:dividerHeight="0dp"
-    android:clipToPadding="false"
-    android:paddingBottom="16dp" />
+        android:divider="#00000000"
+        android:dividerHeight="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp" />
 
 </LinearLayout>

@@ -49,7 +49,7 @@ public class NewDrinkAdapter extends RecyclerView.Adapter<NewDrinkAdapter.NewDri
     @NonNull
     @Override
     public NewDrinkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_new_drink, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_drink, parent, false);
         return new NewDrinkViewHolder(view);
     }
 
@@ -134,14 +134,14 @@ public class NewDrinkAdapter extends RecyclerView.Adapter<NewDrinkAdapter.NewDri
 
         public NewDrinkViewHolder(@NonNull View itemView) {
             super(itemView);
-            drinkImage = itemView.findViewById(R.id.newDrinkImage);
-            drinkName = itemView.findViewById(R.id.newDrinkName);
+            drinkImage = itemView.findViewById(R.id.drinkImage);
+            drinkName = itemView.findViewById(R.id.drinkName);
 
-            drinkOriginalPrice = itemView.findViewById(R.id.newDrinkOriginalPrice);
+            drinkOriginalPrice = itemView.findViewById(R.id.drinkOriginalPrice);
             drinkOriginalPrice.setPaintFlags(drinkOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-            drinkDiscountedPrice = itemView.findViewById(R.id.newDrinkDiscountedPrice);
-            drinkDiscountedPercent = itemView.findViewById(R.id.newDrinkDiscountPercent);
+            drinkDiscountedPrice = itemView.findViewById(R.id.drinkDiscountedPrice);
+            drinkDiscountedPercent = itemView.findViewById(R.id.drinkDiscountPercent);
             soldOutText = itemView.findViewById(R.id.soldOutText);
         }
     }
