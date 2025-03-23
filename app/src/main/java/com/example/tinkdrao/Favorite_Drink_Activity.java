@@ -33,6 +33,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
+
 public class Favorite_Drink_Activity extends AppCompatActivity {
 
     TextView totalFav;
@@ -43,6 +45,7 @@ public class Favorite_Drink_Activity extends AppCompatActivity {
     FirebaseRecyclerAdapter<Drink, DrinkAdapter.DrinkViewHolder> firebaseRecyclerAdapter;
     FirebaseRecyclerOptions<Drink> options;
     long maxid = 0;
+    private DecimalFormat decimalFormat; // Định dạng giá tiền
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,9 @@ public class Favorite_Drink_Activity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        decimalFormat = new DecimalFormat("#,###"); // Dấu chấm: 12.000
+        decimalFormat.setDecimalSeparatorAlwaysShown(false); // Không hiển thị phần thập phân
 
         totalFav = findViewById(R.id.totalFav);
         recyclerViewFav = findViewById(R.id.recyclerViewFav);
@@ -97,6 +103,20 @@ public class Favorite_Drink_Activity extends AppCompatActivity {
                         .error(R.drawable.loading)
                         .into(holder.drinkImage);
 
+                // Hiển thị giá gốc nếu có giảm giá
+                if (drink.getDiscount() > 0) {
+                    double discountedPrice = drink.getPrice() * (100 - drink.getDiscount()) / 100;
+                    holder.drinkDiscountedPercent.setText("-" + decimalFormat.format(drink.getDiscount()) + "%");
+                    holder.drinkDiscountedPrice.setText(decimalFormat.format((int) discountedPrice) + "₫");
+                    holder.drinkOriginalPrice.setText(decimalFormat.format((int) drink.getPrice()) + "₫");
+                    holder.drinkOriginalPrice.setVisibility(View.VISIBLE);
+                    holder.drinkDiscountedPercent.setVisibility(View.VISIBLE);
+                } else {
+                    holder.drinkOriginalPrice.setVisibility(View.GONE);
+                    holder.drinkDiscountedPercent.setVisibility(View.GONE);
+                    holder.drinkDiscountedPrice.setText(decimalFormat.format((int) drink.getPrice()) + "₫");
+                }
+
                 // Click để chuyển sang DrinkDetailActivity
                 holder.itemView.setOnClickListener(v -> {
                     Intent intent = new Intent(v.getContext(), DrinkDetailActivity.class);
@@ -108,7 +128,7 @@ public class Favorite_Drink_Activity extends AppCompatActivity {
             @NonNull
             @Override
             public DrinkAdapter.DrinkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_fav_drink, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_drink, parent, false);
                 return new DrinkAdapter.DrinkViewHolder(view);
             }
         };
