@@ -447,6 +447,31 @@ public class User_Activity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+        if (item.getItemId() == R.id.mnChat) {
+            userRef = FirebaseDatabase.getInstance().getReference("TinkDrao/Users");
+            mUser = FirebaseAuth.getInstance().getCurrentUser();
+            userRef.child(mUser.getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        User userDetail = snapshot.getValue(User.class);
+                        String roleUserDetail = userDetail.getRole();
+                        if(roleUserDetail.equals("Customer"))
+                        {
+                            startActivity(new Intent(User_Activity.this, ChatActivity.class));
+                        }
+                        else {
+                            startActivity(new Intent(User_Activity.this, UserList.class));
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
         if (item.getItemId() == R.id.mnFavorite) {
             if(mUser!=null)
             {
@@ -462,6 +487,7 @@ public class User_Activity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+
         return super.onOptionsItemSelected(item);
     }
 }

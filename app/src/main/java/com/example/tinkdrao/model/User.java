@@ -1,6 +1,8 @@
 package com.example.tinkdrao.model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     String id;
     String username;
     String email;
