@@ -390,10 +390,10 @@ public class OrderDetailActivity extends AppCompatActivity {
                     drink.getImageUrl(),
                     drink.getName(),
                     drink.getPrice(),
-                    0.0,
-                    "Unknown",
+                    drink.getDiscount(),
+                    drink.getDrinkType(),
                     drink.getQuantity(),
-                    "Cái"
+                    drink.getUnit()
             );
             cartList.add(cart);
         }
